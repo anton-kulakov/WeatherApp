@@ -1,5 +1,6 @@
 package dev.anton_kulakov.config;
 
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -98,5 +99,17 @@ public class SpringConfig implements WebMvcConfigurer {
         transactionManager.setSessionFactory(sessionFactory().getObject());
 
         return transactionManager;
+    }
+
+    @Bean
+    public Flyway flyway() {
+        Flyway flyway = Flyway.configure()
+                .dataSource(dataSource())
+                .locations("classpath:db/migration")
+                .schemas("database")
+                .load();
+        flyway.migrate();
+
+        return flyway;
     }
 }
