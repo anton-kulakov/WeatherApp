@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<div class="container">
+<div th:object="${userRegistrationDto}" class="container">
     <div class="row justify-content-center">
         <div class="col-6">
             <div class="weather-logo"></div>
@@ -19,18 +19,36 @@
 
     <div class="row justify-content-center">
         <div class="col-12 col-lg-4 col-md-6 col-sm-12">
-            <form th:action="@{/sign-up}" th:method="POST" th:object="${userRegistrationDto}" class="mt-4">
+            <form th:action="@{/sign-up}" th:method="POST" class="mt-4">
                 <div class="mb-3">
                     <label for="login" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="login" name="login" required th:value="${login}"/>
+                    <div class="input-group has-validation">
+                        <input type="text" class="form-control" id="login" name="login" required th:value="${login}"
+                        th:classappend="${#fields.hasErrors('login')} ? 'is-invalid' : ''"/>
+                        <div th:if="${#fields.hasErrors('login')}" th:errors="*{login}" class="invalid-feedback">
+                            Error name.
+                        </div>
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" required th:value="${password}"/>
+                    <div class="input-group has-validation">
+                        <input type="password" class="form-control" id="password" name="password" required th:value="${password}"
+                        th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"/>
+                        <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="invalid-feedback">
+                            Error name.
+                        </div>
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label for="confirmPassword" class="form-label">Repeat password</label>
-                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required th:value="${confirmPassword}"/>
+                    <div class="input-group has-validation">
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required th:value="${confirmPassword}"
+                        th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''"/>
+                        <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="invalid-feedback">
+                            Error name.
+                        </div>
+                    </div>
                 </div>
 
                 <input type="hidden" name="redirect_to" value="/index"/>

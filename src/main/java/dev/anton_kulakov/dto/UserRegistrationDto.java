@@ -13,10 +13,10 @@ public class UserRegistrationDto {
     private String login;
 
     @NotEmpty(message = "Password should not be empty")
-    @Size(min = 5, max = 5, message = "Password should be exactly 5 characters long")
+    @Size(min = 5, max = 20, message = "The password should be between 5 and 20 characters")
     private String password;
 
     @NotEmpty(message = "Password confirmation should not be empty")
-    @Size(min = 5, max = 5, message = "Password should be exactly 5 characters long")
+    @Size(min = 5, max = 20, message = "The password should be between 5 and 20 characters")
     private String confirmPassword;
 }
