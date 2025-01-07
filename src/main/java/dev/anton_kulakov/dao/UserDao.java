@@ -8,10 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Component
 public class UserDao {
     private final SessionFactory sessionFactory;
     private static final String COUNT_BY_LOGIN_HQL = "SELECT COUNT(u) FROM User u WHERE u.login = :value";
+    private static final String GET_BY_LOGIN_HQL = "FROM User u WHERE u.login = :value";
 
     @Autowired
     public UserDao(SessionFactory sessionFactory) {
@@ -31,4 +34,14 @@ public class UserDao {
             session.persist(user);
         }
     }
+
+    @Transactional
+    public Optional<User> getByLogin(String login) {
+        Session session = sessionFactory.getCurrentSession();
+        Query<User> query = session.createQuery(GET_BY_LOGIN_HQL, User.class);
+        query.setParameter("value", login);
+
+        return query.uniqueResultOptional();
+    }
+
 }
