@@ -2,24 +2,24 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Weather Viewer – Sign Up</title>
+    <title>Weather Viewer – Sign In</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 
-<div th:object="${userRegistrationDto}" class="container">
+<div th:object="${userAuthorizationDto}" class="container">
     <div class="row justify-content-center">
         <div class="col-6">
             <div class="weather-logo"></div>
         </div>
     </div>
 
-    <h2 class="text-center mb-5">Sign Up</h2>
+    <h2 class="text-center mb-5">Sign In</h2>
 
     <div class="row justify-content-center">
         <div class="col-12 col-lg-4 col-md-6 col-sm-12">
-            <form th:action="@{/sign-up}" th:method="POST" class="mt-4">
+            <form th:action="@{/sign-in}" th:method="POST" class="mt-4">
                 <div class="mb-3">
                     <label for="login" class="form-label">Username</label>
                     <div class="input-group has-validation">
@@ -34,18 +34,8 @@
                     <label for="password" class="form-label">Password</label>
                     <div class="input-group has-validation">
                         <input type="password" class="form-control" id="password" name="password" required th:value="${password}"
-                        th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"/>
+                        th:classappend="${#fields.hasErrors()}? 'is-invalid' : ''"/>
                         <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="invalid-feedback">
-                            Error name.
-                        </div>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label for="confirmPassword" class="form-label">Repeat password</label>
-                    <div class="input-group has-validation">
-                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required th:value="${confirmPassword}"
-                        th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''"/>
-                        <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="invalid-feedback">
                             Error name.
                         </div>
                     </div>
@@ -53,8 +43,8 @@
 
                 <input type="hidden" name="redirect_to" value="/index"/>
 
-                <button type="submit" class="btn btn-primary w-100 mt-3">Sign Up</button>
-                <p class="mt-2 text-center">Already have an account? <a th:href="sign-up">Sign in here</a></p>
+                <button type="submit" class="btn btn-primary w-100 mt-3">Sign In</button>
+                <p class="mt-2 text-center">Don't have an account? <a th:href="sign-up">Sign up here</a></p>
             </form>
         </div>
     </div>
