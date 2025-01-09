@@ -1,9 +1,7 @@
 package dev.anton_kulakov.controller;
 
-import dev.anton_kulakov.dao.UserDao;
 import dev.anton_kulakov.dto.UserRegistrationDto;
-import dev.anton_kulakov.model.User;
-import dev.anton_kulakov.service.PasswordHashingService;
+import dev.anton_kulakov.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,13 +12,11 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/sign-up")
 public class SignUpController {
-    private final UserDao userDao;
-    private final PasswordHashingService passwordHashingService;
+    private final UserService userService;
 
     @Autowired
-    public SignUpController(UserDao userDao, PasswordHashingService passwordHashingService) {
-        this.userDao = userDao;
-        this.passwordHashingService = passwordHashingService;
+    public SignUpController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping
@@ -46,10 +42,7 @@ public class SignUpController {
         }
 
         try {
-            String login = userRegistrationDto.getLogin();
-            String hashedPassword = passwordHashingService.hashPassword(userRegistrationDto.getPassword());
-            userDao.persist(new User(login, hashedPassword));
-
+            userService.createUser(userRegistrationDto);
             return "redirect:" + redirectTo;
         } catch (IllegalArgumentException e) {
             bindingResult.rejectValue("login", "error.login", e.getMessage());
