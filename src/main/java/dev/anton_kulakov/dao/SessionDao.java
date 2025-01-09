@@ -6,13 +6,13 @@ import org.hibernate.SessionFactory;
 import org.hibernate.query.MutationQuery;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
 
-@Component
+@Repository
 public class SessionDao {
     private final SessionFactory sessionFactory;
     private static final String COUNT_BY_ID_HQL = "SELECT COUNT(us) FROM UserSession us WHERE us.id = :value";

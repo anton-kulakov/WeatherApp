@@ -103,13 +103,10 @@ public class SpringConfig implements WebMvcConfigurer {
 
     @Bean
     public Flyway flyway() {
-        String schema = env.getActiveProfiles()[0]
-                .equals("test") ? "test_database" : "database";
-
         Flyway flyway = Flyway.configure()
                 .dataSource(dataSource())
                 .locations("classpath:db/migration")
-                .schemas(schema)
+                .schemas("database")
                 .load();
 
         flyway.migrate();
