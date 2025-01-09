@@ -25,13 +25,13 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping("sign-in")
-public class AuthorizationController {
+public class SignInController {
     private final UserDao userDao;
     private final SessionDao sessionDao;
     private final PasswordHashingService passwordHashingService;
 
     @Autowired
-    public AuthorizationController(UserDao userDao, SessionDao sessionDao, PasswordHashingService passwordHashingService) {
+    public SignInController(UserDao userDao, SessionDao sessionDao, PasswordHashingService passwordHashingService) {
         this.userDao = userDao;
         this.sessionDao = sessionDao;
         this.passwordHashingService = passwordHashingService;

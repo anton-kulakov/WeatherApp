@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/sign-up")
-public class RegistrationController {
+public class SignUpController {
     private final UserDao userDao;
     private final PasswordHashingService passwordHashingService;
 
     @Autowired
-    public RegistrationController(UserDao userDao, PasswordHashingService passwordHashingService) {
+    public SignUpController(UserDao userDao, PasswordHashingService passwordHashingService) {
         this.userDao = userDao;
         this.passwordHashingService = passwordHashingService;
     }
