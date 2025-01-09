@@ -1,11 +1,10 @@
 package dev.anton_kulakov.controller;
 
-import dev.anton_kulakov.dao.SessionDao;
 import dev.anton_kulakov.dao.UserDao;
 import dev.anton_kulakov.dto.UserAuthorizationDto;
 import dev.anton_kulakov.model.User;
-import dev.anton_kulakov.model.UserSession;
 import dev.anton_kulakov.service.PasswordHashingService;
+import dev.anton_kulakov.service.SessionService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,14 +25,14 @@ import java.util.UUID;
 @RequestMapping("sign-in")
 public class SignInController {
     private final UserDao userDao;
-    private final SessionDao sessionDao;
     private final PasswordHashingService passwordHashingService;
+    private final SessionService sessionService;
 
     @Autowired
-    public SignInController(UserDao userDao, SessionDao sessionDao, PasswordHashingService passwordHashingService) {
+    public SignInController(UserDao userDao, PasswordHashingService passwordHashingService, SessionService sessionService) {
         this.userDao = userDao;
-        this.sessionDao = sessionDao;
         this.passwordHashingService = passwordHashingService;
+        this.sessionService = sessionService;
     }
 
     @GetMapping
@@ -67,43 +65,15 @@ public class SignInController {
             return "sign-in";
         }
 
-        sessionDao.deleteExpiredSessions();
+        sessionService.deleteExpiredSessions();
 
-        if (!isUserSessionExist(request.getCookies())) {
+        if (!sessionService.isUserSessionExist(request.getCookies())) {
             UUID uuid = UUID.randomUUID();
-            UserSession userSession = new UserSession(uuid.toString(), user.getId(), LocalDateTime.now().plusHours(24));
-
-            sessionDao.persist(userSession);
-
-            Cookie cookie = new Cookie("uuid", uuid.toString());
-            int SECONDS_IN_A_DAY = 24 * 60 * 60;
-            cookie.setMaxAge(SECONDS_IN_A_DAY);
-            cookie.setHttpOnly(true);
+            sessionService.createSession(user, uuid);
+            Cookie cookie = sessionService.createCookie(uuid);
             response.addCookie(cookie);
         }
 
         return "redirect:" + request.getParameter("redirect-to");
-    }
-
-    private boolean isUserSessionExist(Cookie[] cookies) {
-        if (cookies == null) {
-            return false;
-        }
-
-        for (Cookie cookie : cookies) {
-            if (!("uuid".equals(cookie.getName()))) {
-                return false;
-            }
-        }
-
-        for (Cookie cookie : cookies) {
-            UUID uuid = UUID.fromString(cookie.getName());
-
-            if (sessionDao.countById(uuid) == 0) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }
