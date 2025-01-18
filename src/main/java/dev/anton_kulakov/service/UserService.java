@@ -17,7 +17,7 @@ public class UserService {
         this.passwordHashingService = passwordHashingService;
     }
 
-    public void createUser(UserRegistrationDto userRegistrationDto) {
+    public void persist(UserRegistrationDto userRegistrationDto) {
         String login = userRegistrationDto.getLogin();
         String hashedPassword = passwordHashingService.hashPassword(userRegistrationDto.getPassword());
         userDao.persist(new User(login, hashedPassword));

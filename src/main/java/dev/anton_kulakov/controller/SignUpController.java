@@ -42,7 +42,7 @@ public class SignUpController {
         }
 
         try {
-            userService.createUser(userRegistrationDto);
+            userService.persist(userRegistrationDto);
             return "redirect:" + redirectTo;
         } catch (IllegalArgumentException e) {
             bindingResult.rejectValue("login", "error.login", e.getMessage());
