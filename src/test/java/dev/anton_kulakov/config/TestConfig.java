@@ -69,6 +69,7 @@ public class TestConfig {
                 .dataSource(dataSource())
                 .locations("classpath:db/migration")
                 .schemas("test_database")
+                .cleanDisabled(false)
                 .load();
 
         flyway.migrate();

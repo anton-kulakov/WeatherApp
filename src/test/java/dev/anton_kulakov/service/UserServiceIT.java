@@ -4,27 +4,35 @@ import dev.anton_kulakov.config.TestConfig;
 import dev.anton_kulakov.dao.UserDao;
 import dev.anton_kulakov.dto.UserRegistrationDto;
 import dev.anton_kulakov.model.User;
+import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 @ActiveProfiles("test")
 @SpringJUnitConfig(classes = TestConfig.class)
 @WebAppConfiguration
-@Transactional
 public class UserServiceIT {
-    UserService userService;
-    UserDao userDao;
+    private final UserService userService;
+    private final UserDao userDao;
+    private final Flyway flyway;
 
     @Autowired
-    public UserServiceIT(UserService userService, UserDao userDao) {
+    public UserServiceIT(UserService userService, UserDao userDao, Flyway flyway) {
         this.userService = userService;
         this.userDao = userDao;
+        this.flyway = flyway;
+    }
+
+    @BeforeEach
+    void setUp() {
+        flyway.clean();
+        flyway.migrate();
     }
 
     @Test
@@ -33,7 +41,6 @@ public class UserServiceIT {
         UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
         userRegistrationDto.setLogin("test-login");
         userRegistrationDto.setPassword("test-password");
-
         userService.persist(userRegistrationDto);
 
         Assertions.assertTrue(userDao.getByLogin("test-login").isPresent());

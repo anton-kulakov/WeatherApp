@@ -9,9 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-import java.util.UUID;
-
 @Repository
 public class SessionDao {
     private final SessionFactory sessionFactory;
@@ -36,14 +33,8 @@ public class SessionDao {
         query.executeUpdate();
     }
 
-    @Transactional
-    public Optional<UserSession> getById(UUID uuid) {
-        Session session = sessionFactory.getCurrentSession();
-        return Optional.ofNullable(session.get(UserSession.class, uuid));
-    }
-
     @Transactional(readOnly = true)
-    public Long countById(UUID uuid) {
+    public Long countById(String uuid) {
         Session session = sessionFactory.getCurrentSession();
         Query<Long> query = session.createQuery(COUNT_BY_ID_HQL, Long.class);
         query.setParameter("value", uuid);
