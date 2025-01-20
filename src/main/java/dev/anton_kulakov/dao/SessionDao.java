@@ -9,11 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Repository
 public class SessionDao {
     private final SessionFactory sessionFactory;
     private static final String COUNT_BY_ID_HQL = "SELECT COUNT(us) FROM UserSession us WHERE us.id = :value";
     private static final String DELETE_EXPIRED_SESSIONS_HQL = "DELETE FROM UserSession us WHERE us.expiresAt < NOW()";
+    private static final String GET_BY_ID_HQL = "FROM UserSession us WHERE us.id = :value";
 
     @Autowired
     public SessionDao(SessionFactory sessionFactory) {
@@ -40,5 +43,14 @@ public class SessionDao {
         query.setParameter("value", uuid);
 
         return query.uniqueResult();
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<UserSession> getById(String uuid) {
+        Session session = sessionFactory.getCurrentSession();
+        Query<UserSession> query = session.createQuery(GET_BY_ID_HQL, UserSession.class);
+        query.setParameter("value", uuid);
+
+        return query.uniqueResultOptional();
     }
 }

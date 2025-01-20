@@ -35,7 +35,7 @@ public class UserDao {
         }
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional<User> getByLogin(String login) {
         Session session = sessionFactory.getCurrentSession();
         Query<User> query = session.createQuery(GET_BY_LOGIN_HQL, User.class);
@@ -43,5 +43,4 @@ public class UserDao {
 
         return query.uniqueResultOptional();
     }
-
 }
