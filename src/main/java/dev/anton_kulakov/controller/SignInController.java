@@ -69,7 +69,7 @@ public class SignInController {
 
         if (!sessionService.isUserSessionExist(request.getCookies())) {
             UUID uuid = UUID.randomUUID();
-            sessionService.createSession(user, uuid);
+            sessionService.persist(user, uuid);
             Cookie cookie = sessionService.createCookie(uuid);
             response.addCookie(cookie);
         }

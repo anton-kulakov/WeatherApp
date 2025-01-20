@@ -19,11 +19,11 @@ public class SessionService {
         this.sessionDao = sessionDao;
     }
 
-    public void createSession(User user, UUID uuid) {
+    public void persist(User user, UUID uuid) {
         int userId = user.getId();
         LocalDateTime expiresAt = LocalDateTime.now().plusHours(24);
-
         UserSession userSession = new UserSession(uuid.toString(), userId, expiresAt);
+
         sessionDao.persist(userSession);
     }
 
@@ -39,7 +39,7 @@ public class SessionService {
         }
 
         for (Cookie cookie : cookies) {
-            UUID uuid = UUID.fromString(cookie.getName());
+            String uuid = cookie.getName();
 
             if (sessionDao.countById(uuid) == 0) {
                 return false;
@@ -55,8 +55,8 @@ public class SessionService {
 
     public Cookie createCookie(UUID uuid) {
         Cookie cookie = new Cookie("uuid", uuid.toString());
-        int SECONDS_IN_A_DAY = 24 * 60 * 60;
-        cookie.setMaxAge(SECONDS_IN_A_DAY);
+        int secondsInADay = 24 * 60 * 60;
+        cookie.setMaxAge(secondsInADay);
         cookie.setHttpOnly(true);
 
         return cookie;
