@@ -15,6 +15,7 @@ public class UserDao {
     private final SessionFactory sessionFactory;
     private static final String COUNT_BY_LOGIN_HQL = "SELECT COUNT(u) FROM User u WHERE u.login = :value";
     private static final String GET_BY_LOGIN_HQL = "FROM User u WHERE u.login = :value";
+    private static final String GET_BY_ID_HQL = "FROM User u WHERE u.id = :value";
 
     @Autowired
     public UserDao(SessionFactory sessionFactory) {
@@ -40,6 +41,15 @@ public class UserDao {
         Session session = sessionFactory.getCurrentSession();
         Query<User> query = session.createQuery(GET_BY_LOGIN_HQL, User.class);
         query.setParameter("value", login);
+
+        return query.uniqueResultOptional();
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<User> getById(int id) {
+        Session session = sessionFactory.getCurrentSession();
+        Query<User> query = session.createQuery(GET_BY_ID_HQL, User.class);
+        query.setParameter("value", id);
 
         return query.uniqueResultOptional();
     }

@@ -33,7 +33,7 @@ public class SessionService {
     }
 
     public Optional<UserSession> get(Cookie cookie) {
-        String uuid = cookie.getName();
+        String uuid = cookie.getValue();
         return sessionDao.getById(uuid);
     }
 }
