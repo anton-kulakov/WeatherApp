@@ -1,5 +1,6 @@
 package dev.anton_kulakov.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -19,6 +20,7 @@ import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 
 import javax.sql.DataSource;
+import java.net.http.HttpClient;
 import java.util.Properties;
 
 @Profile("dev")
@@ -117,5 +119,15 @@ public class SpringConfig implements WebMvcConfigurer {
         flyway.migrate();
 
         return flyway;
+    }
+
+    @Bean
+    public HttpClient httpClient() {
+        return HttpClient.newHttpClient();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 }
