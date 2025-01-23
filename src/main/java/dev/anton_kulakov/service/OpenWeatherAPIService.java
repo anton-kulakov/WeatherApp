@@ -49,6 +49,10 @@ public class OpenWeatherAPIService {
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
+        if (response.statusCode() >= 400) {
+            throw new RuntimeException("There is an error on the server: " + response.statusCode());
+        }
+
         return objectMapper.readValue(response.body(), WeatherResponseDto.class);
     }
 }
