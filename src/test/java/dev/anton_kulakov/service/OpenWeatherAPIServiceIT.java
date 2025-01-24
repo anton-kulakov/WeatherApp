@@ -48,7 +48,7 @@ public class OpenWeatherAPIServiceIT {
                 .thenReturn(httpResponseMock);
 
         ArrayList<Location> locations = getLocationList();
-        List<WeatherResponseDto> weatherResponseDtoList = openWeatherAPIService.getAll(locations);
+        List<WeatherResponseDto> weatherResponseDtoList = openWeatherAPIService.getLocationByCoordinates(locations);
 
         Assertions.assertEquals("Moscow", weatherResponseDtoList.get(0).getLocationName());
     }
@@ -64,7 +64,7 @@ public class OpenWeatherAPIServiceIT {
 
         ArrayList<Location> locations = getLocationList();
 
-        Assertions.assertThrows(RuntimeException.class, () -> openWeatherAPIService.getAll(locations));
+        Assertions.assertThrows(RuntimeException.class, () -> openWeatherAPIService.getLocationByCoordinates(locations));
     }
 
     private static ArrayList<Location> getLocationList() {

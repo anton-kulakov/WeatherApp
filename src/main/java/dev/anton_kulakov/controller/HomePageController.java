@@ -59,7 +59,7 @@ public class HomePageController {
         List<WeatherResponseDto> weatherResponseDtoList;
 
         try {
-            weatherResponseDtoList = openWeatherAPIService.getAll(locations);
+            weatherResponseDtoList = openWeatherAPIService.getLocationByCoordinates(locations);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }

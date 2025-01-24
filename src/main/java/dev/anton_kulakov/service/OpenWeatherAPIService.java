@@ -1,6 +1,7 @@
 package dev.anton_kulakov.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.anton_kulakov.dto.LocationResponseDto;
 import dev.anton_kulakov.dto.WeatherResponseDto;
 import dev.anton_kulakov.model.Location;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,8 @@ import java.util.List;
 
 @Service
 public class OpenWeatherAPIService {
-    private final static String BASE_URL = "https://api.openweathermap.org/data/2.5/weather?lat=%f&lon=%f&appid=fb21f5dcd66367f5ced328ae7af45ac8&units=metric";
+    private final static String GET_LOCATION_BY_COORDINATES_URL = "https://api.openweathermap.org/data/2.5/weather?lat=%f&lon=%f&appid=fb21f5dcd66367f5ced328ae7af45ac8&units=metric";
+    private final static String GET_LOCATIONS_BY_NAME_URL = "http://api.openweathermap.org/geo/1.0/direct?q=%s&limit=10&appid=fb21f5dcd66367f5ced328ae7af45ac8";
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
@@ -27,7 +29,7 @@ public class OpenWeatherAPIService {
         this.objectMapper = objectMapper;
     }
 
-    public List<WeatherResponseDto> getAll(List<Location> locations) throws IOException, InterruptedException {
+    public List<WeatherResponseDto> getLocationByCoordinates(List<Location> locations) throws IOException, InterruptedException {
         List<WeatherResponseDto> weatherResponseDtoList = new ArrayList<>();
 
         for (Location location : locations) {
@@ -43,7 +45,7 @@ public class OpenWeatherAPIService {
         BigDecimal longitude = location.getLongitude();
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL.formatted(latitude, longitude)))
+                .uri(URI.create(GET_LOCATION_BY_COORDINATES_URL.formatted(latitude, longitude)))
                 .GET()
                 .build();
 
@@ -54,5 +56,20 @@ public class OpenWeatherAPIService {
         }
 
         return objectMapper.readValue(response.body(), WeatherResponseDto.class);
+    }
+
+    public List<LocationResponseDto> getLocationsByName(String locationName) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(GET_LOCATIONS_BY_NAME_URL.formatted(locationName)))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() >= 400) {
+            throw new RuntimeException("There is an error on the server: " + response.statusCode());
+        }
+
+        return objectMapper.readValue(response.body(), objectMapper.getTypeFactory().constructCollectionType(List.class, LocationResponseDto.class));
     }
 }
