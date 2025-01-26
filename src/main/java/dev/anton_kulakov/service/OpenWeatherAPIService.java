@@ -20,6 +20,10 @@ import java.util.List;
 public class OpenWeatherAPIService {
     private final static String GET_LOCATION_BY_COORDINATES_URL = "https://api.openweathermap.org/data/2.5/weather?lat=%f&lon=%f&appid=fb21f5dcd66367f5ced328ae7af45ac8&units=metric";
     private final static String GET_LOCATIONS_BY_NAME_URL = "http://api.openweathermap.org/geo/1.0/direct?q=%s&limit=10&appid=fb21f5dcd66367f5ced328ae7af45ac8";
+    @Value("${api.key}")
+    private String API_KEY;
+    private final static String GET_LOCATION_BY_COORDINATES_URL = "https://api.openweathermap.org/data/2.5/weather?lat=%f&lon=%f&appid=%s&units=metric";
+    private final static String GET_LOCATIONS_BY_NAME_URL = "http://api.openweathermap.org/geo/1.0/direct?q=%s&limit=10&appid=%s";
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
@@ -27,6 +31,13 @@ public class OpenWeatherAPIService {
     public OpenWeatherAPIService(HttpClient httpClient, ObjectMapper objectMapper) {
         this.httpClient = httpClient;
         this.objectMapper = objectMapper;
+    }
+
+    @PostConstruct
+    public void checkApiKey() {
+        if (API_KEY == null || API_KEY.isBlank()) {
+            throw new IllegalArgumentException("API key not configured!");
+        }
     }
 
     public List<WeatherResponseDto> getLocationByCoordinates(List<Location> locations) throws IOException, InterruptedException {
@@ -45,7 +56,7 @@ public class OpenWeatherAPIService {
         BigDecimal longitude = location.getLongitude();
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(GET_LOCATION_BY_COORDINATES_URL.formatted(latitude, longitude)))
+                .uri(URI.create(GET_LOCATION_BY_COORDINATES_URL.formatted(latitude, longitude, API_KEY)))
                 .GET()
                 .build();
 
@@ -60,7 +71,7 @@ public class OpenWeatherAPIService {
 
     public List<LocationResponseDto> getLocationsByName(String locationName) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(GET_LOCATIONS_BY_NAME_URL.formatted(locationName)))
+                .uri(URI.create(GET_LOCATIONS_BY_NAME_URL.formatted(locationName, API_KEY)))
                 .GET()
                 .build();
 

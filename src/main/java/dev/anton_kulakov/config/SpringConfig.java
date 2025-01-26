@@ -5,6 +5,7 @@ import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
@@ -26,7 +27,7 @@ import java.util.Properties;
 @Profile("dev")
 @Configuration
 @ComponentScan("dev.anton_kulakov")
-@PropertySource("classpath:hibernate.properties")
+@PropertySource({"classpath:hibernate.properties", "classpath:application.properties"})
 @EnableTransactionManagement
 @EnableWebMvc
 public class SpringConfig implements WebMvcConfigurer {
@@ -106,6 +107,11 @@ public class SpringConfig implements WebMvcConfigurer {
         transactionManager.setSessionFactory(sessionFactory().getObject());
 
         return transactionManager;
+    }
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
     }
 
     @Bean
