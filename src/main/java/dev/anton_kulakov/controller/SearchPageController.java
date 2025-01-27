@@ -3,6 +3,7 @@ package dev.anton_kulakov.controller;
 import dev.anton_kulakov.dao.LocationDao;
 import dev.anton_kulakov.dao.UserDao;
 import dev.anton_kulakov.dto.LocationResponseDto;
+import dev.anton_kulakov.dto.UserAuthorizationDto;
 import dev.anton_kulakov.model.Location;
 import dev.anton_kulakov.model.User;
 import dev.anton_kulakov.model.UserSession;
@@ -48,12 +49,14 @@ public class SearchPageController {
         Optional<Cookie> cookieOptional = cookieService.findCookieByUuidName(cookies);
 
         if (cookieOptional.isEmpty()) {
+            model.addAttribute("userAuthorizationDto", new UserAuthorizationDto());
             return "sign-in";
         }
 
         Optional<UserSession> userSessionOptional = sessionService.get(cookieOptional.get());
 
         if (userSessionOptional.isEmpty()) {
+            model.addAttribute("userAuthorizationDto", new UserAuthorizationDto());
             return "sign-in";
         }
 
@@ -82,18 +85,21 @@ public class SearchPageController {
     }
 
     @PostMapping
-    public String doPost(HttpServletRequest request,
+    public String doPost(Model model,
+                         HttpServletRequest request,
                          @ModelAttribute ("locationResponseDto") LocationResponseDto locationResponseDto) {
         Cookie[] cookies = request.getCookies();
         Optional<Cookie> cookieOptional = cookieService.findCookieByUuidName(cookies);
 
         if (cookieOptional.isEmpty()) {
+            model.addAttribute("userAuthorizationDto", new UserAuthorizationDto());
             return "sign-in";
         }
 
         Optional<UserSession> userSessionOptional = sessionService.get(cookieOptional.get());
 
         if (userSessionOptional.isEmpty()) {
+            model.addAttribute("userAuthorizationDto", new UserAuthorizationDto());
             return "sign-in";
         }
 

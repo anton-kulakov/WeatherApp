@@ -43,13 +43,15 @@ public class SignInController {
     }
 
     @PostMapping
-    public String doPost(@ModelAttribute("userAuthorizationDto") @Valid UserAuthorizationDto userAuthorizationDto,
+    public String doPost(Model model,
+                         @ModelAttribute("userAuthorizationDto") @Valid UserAuthorizationDto userAuthorizationDto,
                          HttpServletRequest request,
                          HttpServletResponse response,
                          BindingResult bindingResult,
                          @RequestParam("redirect_to") String redirectTo) {
 
         if (bindingResult.hasErrors()) {
+            model.addAttribute("userAuthorizationDto", new UserAuthorizationDto());
             return "sign-in";
         }
 
@@ -57,6 +59,7 @@ public class SignInController {
 
         if (optionalUser.isEmpty()) {
             bindingResult.rejectValue("login", "error.loginNonExistence", "The user with this username does not exist. Please create an account first");
+            model.addAttribute("userAuthorizationDto", new UserAuthorizationDto());
             return "sign-in";
         }
 
@@ -64,6 +67,7 @@ public class SignInController {
 
         if (!passwordHashingService.isPasswordValid(userAuthorizationDto.getPassword(), user.getPassword())) {
             bindingResult.rejectValue("password", "error.incorrectPassword", "The password you entered is incorrect. Please try again.");
+            model.addAttribute("userAuthorizationDto", new UserAuthorizationDto());
             return "sign-in";
         }
 
