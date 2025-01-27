@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS Locations
     ID        INT AUTO_INCREMENT PRIMARY KEY,
     Name      VARCHAR(255) NOT NULL,
     UserID    INT NOT NULL,
-    Latitude  DECIMAL(10, 6) NOT NULL,
-    Longitude DECIMAL(10, 6) NOT NULL,
+    Latitude  DECIMAL(23, 20) NOT NULL,
+    Longitude DECIMAL(24, 20) NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(ID)
 );
 

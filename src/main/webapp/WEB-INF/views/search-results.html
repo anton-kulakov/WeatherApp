@@ -38,7 +38,15 @@
             <h2>Locations:</h2>
             <div class="row">
                 <div class="col-12 col-lg-3 col-md-6 mb-4" th:each="locationResponseDto : ${locationResponseDtoList}">
-                    <div class="card h-100">
+                    <div class="card h-100 position-relative location-card">
+                        <div th:if="${locationResponseDto.isAddedToDatabase()}" class="position-absolute location-card-delete-form">
+                            <form th:action="@{search}" method="post">
+                                <input type="hidden" name="_method" value="DELETE" />
+                                <input type="hidden" name="latitude" th:value="${locationResponseDto.latitude}">
+                                <input type="hidden" name="longitude" th:value="${locationResponseDto.longitude}">
+                                <button type="submit" class="btn-close" aria-label="Delete"></button>
+                            </form>
+                        </div>
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title" th:text="${locationResponseDto.getName()}">Location name</h5>
                             <p class="card-text mb-1" th:text="'Latitude: ' + ${locationResponseDto.getLatitude()}">Latitude</p>
@@ -46,7 +54,19 @@
                             <p class="card-text mb-1" th:text="'Country: ' + ${locationResponseDto.getCountry()}">Country</p>
                             <p class="card-text mb-3" th:text="'State: ' + ${locationResponseDto.getState()}">State</p>
                             <div class="mt-auto">
-                                <button class="btn btn-primary w-100">Add</button>
+                                <form th:action="@{/search}" method="post">
+                                    <input type="hidden" name="name" th:value="${locationResponseDto.name}">
+                                    <input type="hidden" name="latitude" th:value="${locationResponseDto.latitude}">
+                                    <input type="hidden" name="longitude" th:value="${locationResponseDto.longitude}">
+
+                                    <button th:if="${!locationResponseDto.isAddedToDatabase()}" type="submit" class="btn btn-primary w-100">
+                                        Add
+                                    </button>
+                                </form>
+
+                                <button th:if="${locationResponseDto.isAddedToDatabase()}" class="btn btn-success w-100" disabled>
+                                    Added
+                                </button>
                             </div>
                         </div>
                     </div>

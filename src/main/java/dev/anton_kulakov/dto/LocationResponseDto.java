@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -17,14 +19,16 @@ public class LocationResponseDto {
     private String name;
 
     @JsonProperty("lat")
-    private double latitude;
+    private BigDecimal latitude;
 
     @JsonProperty("lon")
-    private double longitude;
+    private BigDecimal longitude;
 
     @JsonProperty("country")
     private String country;
 
     @JsonProperty("state")
     private String state;
+
+    private boolean isAddedToDatabase;
 }

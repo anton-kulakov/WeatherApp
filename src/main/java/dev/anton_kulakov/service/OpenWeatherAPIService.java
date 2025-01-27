@@ -1,11 +1,14 @@
 package dev.anton_kulakov.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.anton_kulakov.dao.LocationDao;
 import dev.anton_kulakov.dto.LocationResponseDto;
 import dev.anton_kulakov.dto.WeatherResponseDto;
 import dev.anton_kulakov.model.Location;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import jakarta.annotation.PostConstruct;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -18,17 +21,17 @@ import java.util.List;
 
 @Service
 public class OpenWeatherAPIService {
-    private final static String GET_LOCATION_BY_COORDINATES_URL = "https://api.openweathermap.org/data/2.5/weather?lat=%f&lon=%f&appid=fb21f5dcd66367f5ced328ae7af45ac8&units=metric";
-    private final static String GET_LOCATIONS_BY_NAME_URL = "http://api.openweathermap.org/geo/1.0/direct?q=%s&limit=10&appid=fb21f5dcd66367f5ced328ae7af45ac8";
     @Value("${api.key}")
     private String API_KEY;
     private final static String GET_LOCATION_BY_COORDINATES_URL = "https://api.openweathermap.org/data/2.5/weather?lat=%f&lon=%f&appid=%s&units=metric";
     private final static String GET_LOCATIONS_BY_NAME_URL = "http://api.openweathermap.org/geo/1.0/direct?q=%s&limit=10&appid=%s";
+    private final LocationDao locationDao;
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public OpenWeatherAPIService(HttpClient httpClient, ObjectMapper objectMapper) {
+    public OpenWeatherAPIService(LocationDao locationDao, HttpClient httpClient, ObjectMapper objectMapper) {
+        this.locationDao = locationDao;
         this.httpClient = httpClient;
         this.objectMapper = objectMapper;
     }
@@ -69,7 +72,7 @@ public class OpenWeatherAPIService {
         return objectMapper.readValue(response.body(), WeatherResponseDto.class);
     }
 
-    public List<LocationResponseDto> getLocationsByName(String locationName) throws IOException, InterruptedException {
+    public List<LocationResponseDto> getLocationsByName(String locationName, int userID) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(GET_LOCATIONS_BY_NAME_URL.formatted(locationName, API_KEY)))
                 .GET()
@@ -81,6 +84,22 @@ public class OpenWeatherAPIService {
             throw new RuntimeException("There is an error on the server: " + response.statusCode());
         }
 
-        return objectMapper.readValue(response.body(), objectMapper.getTypeFactory().constructCollectionType(List.class, LocationResponseDto.class));
+        List<LocationResponseDto> locationResponseDtoList = objectMapper.readValue(response.body(), objectMapper.getTypeFactory().constructCollectionType(List.class, LocationResponseDto.class));
+        checkIfLocationAddedByUser(locationResponseDtoList, userID);
+
+        return locationResponseDtoList;
+    }
+
+    private void checkIfLocationAddedByUser(List<LocationResponseDto> locationResponseDtoList, int userID) {
+        for (LocationResponseDto location : locationResponseDtoList) {
+            BigDecimal latitude = location.getLatitude();
+            BigDecimal longitude = location.getLongitude();
+
+            Long count = locationDao.countByUserId(userID, latitude, longitude);
+
+            if (count == 1) {
+                location.setAddedToDatabase(true);
+            }
+        }
     }
 }
