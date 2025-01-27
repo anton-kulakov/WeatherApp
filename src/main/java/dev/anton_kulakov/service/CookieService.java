@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Service
 public class CookieService {
-    public Optional<Cookie> findCookieByName(Cookie[] cookies) {
+    public Optional<Cookie> findCookieByUuidName(Cookie[] cookies) {
         return cookies != null ? Arrays.stream(cookies)
                 .filter(cookie -> "uuid".equals(cookie.getName()))
                 .findFirst() : Optional.empty();

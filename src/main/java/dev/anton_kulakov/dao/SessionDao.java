@@ -30,6 +30,13 @@ public class SessionDao {
     }
 
     @Transactional
+    public void delete(String uuid) {
+        Session session = sessionFactory.getCurrentSession();
+        UserSession userSession = session.find(UserSession.class, uuid);
+        session.remove(userSession);
+    }
+
+    @Transactional
     public void deleteExpiredSessions() {
         Session session = sessionFactory.getCurrentSession();
         MutationQuery query = session.createMutationQuery(DELETE_EXPIRED_SESSIONS_HQL);

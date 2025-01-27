@@ -68,7 +68,7 @@ public class SignInController {
         }
 
         sessionService.deleteExpiredSessions();
-        Optional<Cookie> foundCookieOptional = cookieService.findCookieByName(request.getCookies());
+        Optional<Cookie> foundCookieOptional = cookieService.findCookieByUuidName(request.getCookies());
         Optional<UserSession> userSessionOptional = Optional.empty();
 
         if (foundCookieOptional.isPresent()) {

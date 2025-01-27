@@ -44,7 +44,7 @@ public class HomePageController {
     @GetMapping
     public String doGet(Model model, HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        Optional<Cookie> cookieOptional = cookieService.findCookieByName(cookies);
+        Optional<Cookie> cookieOptional = cookieService.findCookieByUuidName(cookies);
 
         if (cookieOptional.isEmpty()) {
             return "sign-in";

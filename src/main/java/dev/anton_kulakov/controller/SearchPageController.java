@@ -45,7 +45,7 @@ public class SearchPageController {
     @GetMapping
     public String doGet(Model model, HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        Optional<Cookie> cookieOptional = cookieService.findCookieByName(cookies);
+        Optional<Cookie> cookieOptional = cookieService.findCookieByUuidName(cookies);
 
         if (cookieOptional.isEmpty()) {
             return "sign-in";
@@ -85,7 +85,7 @@ public class SearchPageController {
     public String doPost(HttpServletRequest request,
                          @ModelAttribute ("locationResponseDto") LocationResponseDto locationResponseDto) {
         Cookie[] cookies = request.getCookies();
-        Optional<Cookie> cookieOptional = cookieService.findCookieByName(cookies);
+        Optional<Cookie> cookieOptional = cookieService.findCookieByUuidName(cookies);
 
         if (cookieOptional.isEmpty()) {
             return "sign-in";

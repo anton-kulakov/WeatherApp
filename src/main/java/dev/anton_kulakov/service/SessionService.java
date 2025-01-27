@@ -36,4 +36,9 @@ public class SessionService {
         String uuid = cookie.getValue();
         return sessionDao.getById(uuid);
     }
+
+    public void deleteByID(Cookie cookie) {
+        String uuid = cookie.getValue();
+        sessionDao.delete(uuid);
+    }
 }
