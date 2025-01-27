@@ -8,12 +8,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherResponseDto {
+    private BigDecimal latitude;
+    private BigDecimal longitude;
+
     @JsonProperty("name")
     private String locationName;
 

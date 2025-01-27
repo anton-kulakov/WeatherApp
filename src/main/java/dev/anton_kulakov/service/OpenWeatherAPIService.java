@@ -69,7 +69,11 @@ public class OpenWeatherAPIService {
             throw new RuntimeException("There is an error on the server: " + response.statusCode());
         }
 
-        return objectMapper.readValue(response.body(), WeatherResponseDto.class);
+        WeatherResponseDto weatherResponseDto = objectMapper.readValue(response.body(), WeatherResponseDto.class);
+        weatherResponseDto.setLatitude(latitude);
+        weatherResponseDto.setLongitude(longitude);
+
+        return weatherResponseDto;
     }
 
     public List<LocationResponseDto> getLocationsByName(String locationName, int userID) throws IOException, InterruptedException {
