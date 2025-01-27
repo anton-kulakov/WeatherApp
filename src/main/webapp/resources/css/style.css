@@ -25,6 +25,11 @@ section#page-content {
     min-height: 250px;
 }
 
+.location-card .location-card-delete-form {
+    top: 8px;
+    right: 8px;
+}
+
 .location-search-input-group .clear-input-button {
     border-color: rgb(222, 226, 230);
 }
