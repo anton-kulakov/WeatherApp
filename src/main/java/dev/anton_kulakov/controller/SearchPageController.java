@@ -60,7 +60,7 @@ public class SearchPageController {
         String query = request.getParameter("query");
 
         if (query == null) {
-            return "search-results";
+            return "index";
         }
 
         int userID = userSessionOptional.get().getUserID();

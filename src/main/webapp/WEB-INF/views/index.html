@@ -24,14 +24,14 @@
 <section id="page-content">
     <div class="container mt-4">
         <div class="d-flex my-4">
-            <div class="input-group location-search-input-group me-3">
-                <input class="form-control" type="text" name="name" placeholder="Enter location" required />
+            <form th:action="@{/search(query=${query})}" method="GET" class="input-group location-search-input-group me-3">
+                <input class="form-control" type="text" name="query" placeholder="Enter location" value="" required>
                 <button class="btn btn-outline-secondary btn-sm clear-input-button" type="button"
                         onclick="this.previousElementSibling.value=''">
                     &times;
                 </button>
-            </div>
-            <button class="btn btn-outline-success">Search</button>
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
         </div>
 
         <div>
