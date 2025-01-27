@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS Locations
     UserID    INT NOT NULL,
     Latitude  DECIMAL(23, 20) NOT NULL,
     Longitude DECIMAL(24, 20) NOT NULL,
-    FOREIGN KEY (UserID) REFERENCES Users(ID)
+    FOREIGN KEY (UserID) REFERENCES Users(ID),
+    UNIQUE INDEX unique_latitude_longitude (Latitude, Longitude)
 );
 
 CREATE TABLE IF NOT EXISTS Sessions

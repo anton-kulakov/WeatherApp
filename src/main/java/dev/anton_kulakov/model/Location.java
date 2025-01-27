@@ -7,7 +7,12 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "Locations")
+@Table(name = "Locations",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "unique_latitude_longitude",
+                        columnNames = {"latitude", "longitude"}
+                )})
 @Getter
 @Setter
 public class Location {
@@ -16,6 +21,10 @@ public class Location {
     private Integer id;
     private String name;
     private int userID;
+
+    @Column(unique = true)
     private BigDecimal latitude;
+
+    @Column(unique = true)
     private BigDecimal longitude;
 }
