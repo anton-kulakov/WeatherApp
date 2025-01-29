@@ -1,6 +1,10 @@
 package dev.anton_kulakov.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.anton_kulakov.controller.AuthenticationInterceptor;
+import dev.anton_kulakov.dao.UserDao;
+import dev.anton_kulakov.service.CookieService;
+import dev.anton_kulakov.service.SessionService;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -12,10 +16,7 @@ import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
@@ -33,6 +34,7 @@ import java.util.Properties;
 public class SpringConfig implements WebMvcConfigurer {
     private final ApplicationContext applicationContext;
     private final Environment env;
+
     @Autowired
     public SpringConfig(ApplicationContext applicationContext, Environment env) {
         this.applicationContext = applicationContext;
@@ -63,6 +65,19 @@ public class SpringConfig implements WebMvcConfigurer {
         resolver.setTemplateEngine(templateEngine());
         resolver.setCharacterEncoding("UTF-8");
         registry.viewResolver(resolver);
+    }
+
+    @Bean
+    public AuthenticationInterceptor authenticationInterceptor(CookieService cookieService, SessionService sessionService, UserDao userDao) {
+        return new AuthenticationInterceptor(cookieService, sessionService, userDao);
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        AuthenticationInterceptor authenticationInterceptor = applicationContext.getBean(AuthenticationInterceptor.class);
+        registry.addInterceptor(authenticationInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/resources/**", "/sign-in", "/sign-up", "/sign-out");
     }
 
     @Override

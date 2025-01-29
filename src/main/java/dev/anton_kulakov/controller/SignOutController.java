@@ -30,7 +30,7 @@ public class SignOutController {
                          HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
 
-        Optional<Cookie> foundCookieOptional = cookieService.findCookieByUuidName(cookies);
+        Optional<Cookie> foundCookieOptional = cookieService.getCookieByName(cookies, "uuid");
 
         foundCookieOptional.ifPresent(sessionService::deleteByID);
 
