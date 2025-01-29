@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("sign-out")
+@RequestMapping("/sign-out")
 public class SignOutController {
     private final CookieService cookieService;
     private final SessionService sessionService;

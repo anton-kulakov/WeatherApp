@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
-@RequestMapping("search")
+@RequestMapping("/search")
 public class SearchPageController {
     private final LocationDao locationDao;
     private final LocationMapper locationMapper;

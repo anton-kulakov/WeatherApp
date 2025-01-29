@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("sign-in")
+@RequestMapping("/sign-in")
 public class SignInController {
     private final UserDao userDao;
     private final PasswordHashingService passwordHashingService;
@@ -48,8 +48,8 @@ public class SignInController {
                          HttpServletRequest request,
                          HttpServletResponse response,
                          BindingResult bindingResult,
-                         @RequestParam("redirect_to") String redirectTo) {
-
+                         @RequestParam("redirect_to") String redirectTo)
+    {
         if (bindingResult.hasErrors()) {
             model.addAttribute("userAuthorizationDto", new UserAuthorizationDto());
             return "sign-in";

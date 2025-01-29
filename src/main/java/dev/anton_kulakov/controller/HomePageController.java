@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
-@RequestMapping("index")
+@RequestMapping("/index")
 public class HomePageController {
     private final LocationDao locationDao;
     private final OpenWeatherAPIService openWeatherAPIService;
