@@ -5,8 +5,8 @@ import dev.anton_kulakov.dto.UserAuthorizationDto;
 import dev.anton_kulakov.model.User;
 import dev.anton_kulakov.model.UserSession;
 import dev.anton_kulakov.service.CookieService;
-import dev.anton_kulakov.service.PasswordHashingService;
 import dev.anton_kulakov.service.SessionService;
+import dev.anton_kulakov.validator.UserAuthDtoValidator;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,16 +24,16 @@ import java.util.UUID;
 @RequestMapping("/sign-in")
 public class SignInController {
     private final UserDao userDao;
-    private final PasswordHashingService passwordHashingService;
     private final SessionService sessionService;
     private final CookieService cookieService;
+    private final UserAuthDtoValidator userAuthDtoValidator;
 
     @Autowired
-    public SignInController(UserDao userDao, PasswordHashingService passwordHashingService, SessionService sessionService, CookieService cookieService) {
+    public SignInController(UserDao userDao, SessionService sessionService, CookieService cookieService, UserAuthDtoValidator userAuthDtoValidator) {
         this.userDao = userDao;
-        this.passwordHashingService = passwordHashingService;
         this.sessionService = sessionService;
         this.cookieService = cookieService;
+        this.userAuthDtoValidator = userAuthDtoValidator;
     }
 
     @GetMapping
@@ -50,24 +50,10 @@ public class SignInController {
                          HttpServletResponse response,
                          @RequestParam("redirect_to") String redirectTo) {
 
+        userAuthDtoValidator.validate(userAuthorizationDto, bindingResult);
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("userAuthorizationDto", userAuthorizationDto);
-            return "sign-in";
-        }
-
-        Optional<User> optionalUser = userDao.getByLogin(userAuthorizationDto.getLogin());
-
-        if (optionalUser.isEmpty()) {
-            bindingResult.rejectValue("login", "error.loginNonExistence", "The user with this username does not exist. Please create an account first");
-            model.addAttribute("userAuthorizationDto", new UserAuthorizationDto());
-            return "sign-in";
-        }
-
-        User user = optionalUser.get();
-
-        if (!passwordHashingService.isPasswordValid(userAuthorizationDto.getPassword(), user.getPassword())) {
-            bindingResult.rejectValue("password", "error.incorrectPassword", "The password you entered is incorrect. Please try again.");
-            model.addAttribute("userAuthorizationDto", new UserAuthorizationDto());
             return "sign-in";
         }
 
@@ -78,6 +64,9 @@ public class SignInController {
         if (foundCookieOptional.isPresent()) {
             userSessionOptional = sessionService.get(foundCookieOptional.get());
         }
+
+        Optional<User> optionalUser = userDao.getByLogin(userAuthorizationDto.getLogin());
+        User user = optionalUser.get();
 
         if (userSessionOptional.isEmpty()) {
             UUID uuid = UUID.randomUUID();

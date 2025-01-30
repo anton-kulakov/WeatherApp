@@ -19,7 +19,9 @@ public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private String name;
+
     private int userID;
 
     @Column(unique = true)

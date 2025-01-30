@@ -21,5 +21,6 @@ public class UserSession {
     private String id;
 
     private int userID;
+
     private LocalDateTime expiresAt;
 }

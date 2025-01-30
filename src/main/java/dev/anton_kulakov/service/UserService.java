@@ -9,17 +9,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
     private final UserDao userDao;
-    private final PasswordHashingService passwordHashingService;
+    private final PasswordService passwordService;
 
     @Autowired
-    public UserService(PasswordHashingService passwordHashingService, UserDao userDao) {
+    public UserService(PasswordService passwordService, UserDao userDao) {
         this.userDao = userDao;
-        this.passwordHashingService = passwordHashingService;
+        this.passwordService = passwordService;
     }
 
     public void persist(UserRegistrationDto userRegistrationDto) {
         String login = userRegistrationDto.getLogin();
-        String hashedPassword = passwordHashingService.hashPassword(userRegistrationDto.getPassword());
+        String hashedPassword = passwordService.hashPassword(userRegistrationDto.getPassword());
         userDao.persist(new User(login, hashedPassword));
     }
 }
