@@ -45,13 +45,13 @@ public class SignInController {
     @PostMapping
     public String doPost(Model model,
                          @ModelAttribute("userAuthorizationDto") @Valid UserAuthorizationDto userAuthorizationDto,
+                         BindingResult bindingResult,
                          HttpServletRequest request,
                          HttpServletResponse response,
-                         BindingResult bindingResult,
-                         @RequestParam("redirect_to") String redirectTo)
-    {
+                         @RequestParam("redirect_to") String redirectTo) {
+
         if (bindingResult.hasErrors()) {
-            model.addAttribute("userAuthorizationDto", new UserAuthorizationDto());
+            model.addAttribute("userAuthorizationDto", userAuthorizationDto);
             return "sign-in";
         }
 
