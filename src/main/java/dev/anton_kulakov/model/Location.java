@@ -11,7 +11,7 @@ import java.math.BigDecimal;
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "unique_latitude_longitude",
-                        columnNames = {"latitude", "longitude"}
+                        columnNames = {"userID", "latitude", "longitude"}
                 )})
 @Getter
 @Setter
