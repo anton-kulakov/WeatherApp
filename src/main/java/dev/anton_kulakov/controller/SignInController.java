@@ -1,8 +1,6 @@
 package dev.anton_kulakov.controller;
 
-import dev.anton_kulakov.dao.UserDao;
 import dev.anton_kulakov.dto.UserAuthorizationDto;
-import dev.anton_kulakov.model.User;
 import dev.anton_kulakov.model.UserSession;
 import dev.anton_kulakov.service.CookieService;
 import dev.anton_kulakov.service.SessionService;
@@ -23,14 +21,12 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/sign-in")
 public class SignInController {
-    private final UserDao userDao;
     private final SessionService sessionService;
     private final CookieService cookieService;
     private final UserAuthDtoValidator userAuthDtoValidator;
 
     @Autowired
-    public SignInController(UserDao userDao, SessionService sessionService, CookieService cookieService, UserAuthDtoValidator userAuthDtoValidator) {
-        this.userDao = userDao;
+    public SignInController(SessionService sessionService, CookieService cookieService, UserAuthDtoValidator userAuthDtoValidator) {
         this.sessionService = sessionService;
         this.cookieService = cookieService;
         this.userAuthDtoValidator = userAuthDtoValidator;
@@ -58,20 +54,16 @@ public class SignInController {
         }
 
         sessionService.deleteExpiredSessions();
-        Optional<Cookie> foundCookieOptional = cookieService.getCookieByName(request.getCookies(), "uuid");
+        Optional<Cookie> cookieOptional = cookieService.getByName(request.getCookies(), "uuid");
         Optional<UserSession> userSessionOptional = Optional.empty();
 
-        if (foundCookieOptional.isPresent()) {
-            userSessionOptional = sessionService.get(foundCookieOptional.get());
+        if (cookieOptional.isPresent()) {
+            userSessionOptional = sessionService.get(cookieOptional.get());
         }
 
-        Optional<User> optionalUser = userDao.getByLogin(userAuthorizationDto.getLogin());
-        User user = optionalUser.get();
-
         if (userSessionOptional.isEmpty()) {
-            UUID uuid = UUID.randomUUID();
-            sessionService.persist(user, uuid);
-            Cookie cookie = cookieService.createCookie(uuid);
+            UUID uuid = sessionService.create(userAuthorizationDto.getLogin());
+            Cookie cookie = cookieService.create(uuid);
             response.addCookie(cookie);
         }
 

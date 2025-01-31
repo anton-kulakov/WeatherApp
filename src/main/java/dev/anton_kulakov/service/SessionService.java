@@ -1,6 +1,7 @@
 package dev.anton_kulakov.service;
 
 import dev.anton_kulakov.dao.SessionDao;
+import dev.anton_kulakov.dao.UserDao;
 import dev.anton_kulakov.model.User;
 import dev.anton_kulakov.model.UserSession;
 import jakarta.servlet.http.Cookie;
@@ -13,19 +14,13 @@ import java.util.UUID;
 
 @Service
 public class SessionService {
+    private final UserDao userDao;
     private final SessionDao sessionDao;
 
     @Autowired
-    public SessionService(SessionDao sessionDao) {
+    public SessionService(UserDao userDao, SessionDao sessionDao) {
+        this.userDao = userDao;
         this.sessionDao = sessionDao;
-    }
-
-    public void persist(User user, UUID uuid) {
-        int userId = user.getId();
-        LocalDateTime expiresAt = LocalDateTime.now().plusHours(24);
-        UserSession userSession = new UserSession(uuid.toString(), userId, expiresAt);
-
-        sessionDao.persist(userSession);
     }
 
     public void deleteExpiredSessions() {
@@ -37,8 +32,25 @@ public class SessionService {
         return sessionDao.getById(uuid);
     }
 
-    public void deleteByID(Cookie cookie) {
+    public void deleteById(Cookie cookie) {
         String uuid = cookie.getValue();
         sessionDao.delete(uuid);
+    }
+
+    public UUID create(String login) {
+        Optional<User> optionalUser = userDao.getByLogin(login);
+
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException();
+        }
+
+        User user = optionalUser.get();
+        UUID uuid = UUID.randomUUID();
+        LocalDateTime expiresAt = LocalDateTime.now().plusHours(24);
+        UserSession userSession = new UserSession(uuid.toString(), user.getId(), expiresAt);
+
+        sessionDao.persist(userSession);
+
+        return uuid;
     }
 }

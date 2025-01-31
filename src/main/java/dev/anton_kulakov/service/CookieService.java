@@ -9,13 +9,13 @@ import java.util.UUID;
 
 @Service
 public class CookieService {
-    public Optional<Cookie> getCookieByName(Cookie[] cookies, String uuid) {
+    public Optional<Cookie> getByName(Cookie[] cookies, String uuid) {
         return cookies != null ? Arrays.stream(cookies)
                 .filter(cookie -> uuid.equals(cookie.getName()))
                 .findFirst() : Optional.empty();
     }
 
-    public Cookie createCookie(UUID uuid) {
+    public Cookie create(UUID uuid) {
         Cookie cookie = new Cookie("uuid", uuid.toString());
         int secondsInADay = 24 * 60 * 60;
         cookie.setMaxAge(secondsInADay);

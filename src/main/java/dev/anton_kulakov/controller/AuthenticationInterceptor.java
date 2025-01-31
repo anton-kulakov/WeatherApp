@@ -30,7 +30,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
                              Object handler) throws Exception {
-        Optional<Cookie> cookieOptional = cookieService.getCookieByName(request.getCookies(), "uuid");
+        Optional<Cookie> cookieOptional = cookieService.getByName(request.getCookies(), "uuid");
 
         if (cookieOptional.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/sign-in");
