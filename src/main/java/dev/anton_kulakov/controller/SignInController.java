@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,7 +34,19 @@ public class SignInController {
     }
 
     @GetMapping
-    public String doGet(Model model) {
+    public String doGet(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        sessionService.deleteExpiredSessions();
+        Optional<Cookie> cookieOptional = cookieService.getByName(request.getCookies(), "uuid");
+        Optional<UserSession> userSessionOptional = Optional.empty();
+
+        if (cookieOptional.isPresent()) {
+            userSessionOptional = sessionService.get(cookieOptional.get());
+        }
+
+        if (userSessionOptional.isPresent()) {
+            response.sendRedirect(request.getContextPath() + "/index");
+        }
+
         model.addAttribute("userAuthorizationDto", new UserAuthorizationDto());
         return "sign-in";
     }
