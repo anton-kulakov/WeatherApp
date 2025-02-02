@@ -1,4 +1,4 @@
-package dev.anton_kulakov.controller;
+package dev.anton_kulakov.controller.interceptor;
 
 import dev.anton_kulakov.dao.UserDao;
 import dev.anton_kulakov.dto.UserRequestDto;
@@ -14,13 +14,13 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.Optional;
 
-public class AuthenticationInterceptor implements HandlerInterceptor {
+public class IdentifiedUserInterceptor implements HandlerInterceptor {
     private final CookieService cookieService;
     private final SessionService sessionService;
     private final UserDao userDao;
 
     @Autowired
-    public AuthenticationInterceptor(CookieService cookieService, SessionService sessionService, UserDao userDao) {
+    public IdentifiedUserInterceptor(CookieService cookieService, SessionService sessionService, UserDao userDao) {
         this.cookieService = cookieService;
         this.sessionService = sessionService;
         this.userDao = userDao;

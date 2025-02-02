@@ -1,7 +1,8 @@
 package dev.anton_kulakov.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.anton_kulakov.controller.AuthenticationInterceptor;
+import dev.anton_kulakov.controller.interceptor.IdentifiedUserInterceptor;
+import dev.anton_kulakov.controller.interceptor.UnidentifiedUserInterceptor;
 import dev.anton_kulakov.dao.UserDao;
 import dev.anton_kulakov.service.CookieService;
 import dev.anton_kulakov.service.SessionService;
@@ -68,14 +69,25 @@ public class SpringConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public AuthenticationInterceptor authenticationInterceptor(CookieService cookieService, SessionService sessionService, UserDao userDao) {
-        return new AuthenticationInterceptor(cookieService, sessionService, userDao);
+    public IdentifiedUserInterceptor identifiedUserInterceptor(CookieService cookieService, SessionService sessionService, UserDao userDao) {
+        return new IdentifiedUserInterceptor(cookieService, sessionService, userDao);
+    }
+
+    @Bean
+    public UnidentifiedUserInterceptor unidentifiedUserInterceptor(CookieService cookieService, SessionService sessionService) {
+        return new UnidentifiedUserInterceptor(cookieService, sessionService);
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        AuthenticationInterceptor authenticationInterceptor = applicationContext.getBean(AuthenticationInterceptor.class);
-        registry.addInterceptor(authenticationInterceptor)
+        UnidentifiedUserInterceptor unidentifiedUserInterceptor = applicationContext.getBean(UnidentifiedUserInterceptor.class);
+        IdentifiedUserInterceptor identifiedUserInterceptor = applicationContext.getBean(IdentifiedUserInterceptor.class);
+
+        registry.addInterceptor(unidentifiedUserInterceptor)
+                .addPathPatterns("/sign-in/**", "/sign-up/**")
+                .excludePathPatterns("/resources/**", "/index/**", "/search/**", "/sign-out");
+
+        registry.addInterceptor(identifiedUserInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/resources/**", "/sign-in", "/sign-up", "/sign-out");
     }
