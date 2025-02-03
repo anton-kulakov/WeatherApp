@@ -2,6 +2,7 @@ package dev.anton_kulakov.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.anton_kulakov.controller.interceptor.IdentifiedUserInterceptor;
+import dev.anton_kulakov.controller.interceptor.SearchPageInterceptor;
 import dev.anton_kulakov.controller.interceptor.UnidentifiedUserInterceptor;
 import dev.anton_kulakov.dao.UserDao;
 import dev.anton_kulakov.service.CookieService;
@@ -69,23 +70,33 @@ public class SpringConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public IdentifiedUserInterceptor identifiedUserInterceptor(CookieService cookieService, SessionService sessionService, UserDao userDao) {
-        return new IdentifiedUserInterceptor(cookieService, sessionService, userDao);
+    public UnidentifiedUserInterceptor unidentifiedUserInterceptor(CookieService cookieService, SessionService sessionService) {
+        return new UnidentifiedUserInterceptor(cookieService, sessionService);
     }
 
     @Bean
-    public UnidentifiedUserInterceptor unidentifiedUserInterceptor(CookieService cookieService, SessionService sessionService) {
-        return new UnidentifiedUserInterceptor(cookieService, sessionService);
+    public SearchPageInterceptor searchPageInterceptor() {
+        return new SearchPageInterceptor();
+    }
+
+    @Bean
+    public IdentifiedUserInterceptor identifiedUserInterceptor(CookieService cookieService, SessionService sessionService, UserDao userDao) {
+        return new IdentifiedUserInterceptor(cookieService, sessionService, userDao);
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         UnidentifiedUserInterceptor unidentifiedUserInterceptor = applicationContext.getBean(UnidentifiedUserInterceptor.class);
+        SearchPageInterceptor searchPageInterceptor = applicationContext.getBean(SearchPageInterceptor.class);
         IdentifiedUserInterceptor identifiedUserInterceptor = applicationContext.getBean(IdentifiedUserInterceptor.class);
 
         registry.addInterceptor(unidentifiedUserInterceptor)
                 .addPathPatterns("/sign-in/**", "/sign-up/**")
                 .excludePathPatterns("/resources/**", "/index/**", "/search/**", "/sign-out");
+
+        registry.addInterceptor(searchPageInterceptor)
+                .addPathPatterns("/search")
+                .excludePathPatterns("/resources/**", "/index/**", "/sign-in", "/sign-up", "/sign-out");
 
         registry.addInterceptor(identifiedUserInterceptor)
                 .addPathPatterns("/**")

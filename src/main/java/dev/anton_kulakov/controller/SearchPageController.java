@@ -34,10 +34,6 @@ public class SearchPageController {
     public String doGet(Model model, HttpServletRequest request) {
         String query = request.getParameter("query");
 
-        if (query == null) {
-            return "index";
-        }
-
         UserRequestDto userRequestDto = (UserRequestDto) request.getAttribute("userRequestDto");
         int userId = userRequestDto.getId();
         List<LocationResponseDto> locationResponseDtoList;
