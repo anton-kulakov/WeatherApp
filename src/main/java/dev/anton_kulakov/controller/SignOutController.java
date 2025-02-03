@@ -29,9 +29,7 @@ public class SignOutController {
     public String doPost(Model model,
                          HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-
         Optional<Cookie> foundCookieOptional = cookieService.getByName(cookies, "uuid");
-
         foundCookieOptional.ifPresent(sessionService::deleteById);
 
         model.addAttribute("userAuthorizationDto", new UserAuthorizationDto());

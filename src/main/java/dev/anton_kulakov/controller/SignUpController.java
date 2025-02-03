@@ -3,6 +3,7 @@ package dev.anton_kulakov.controller;
 import dev.anton_kulakov.dto.UserAuthorizationDto;
 import dev.anton_kulakov.dto.UserRegistrationDto;
 import dev.anton_kulakov.service.UserService;
+import dev.anton_kulakov.validator.UserRegistrationDtoValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,10 +15,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/sign-up")
 public class SignUpController {
     private final UserService userService;
+    private final UserRegistrationDtoValidator userRegistrationDtoValidator;
 
     @Autowired
-    public SignUpController(UserService userService) {
+    public SignUpController(UserService userService, UserRegistrationDtoValidator userRegistrationDtoValidator) {
         this.userService = userService;
+        this.userRegistrationDtoValidator = userRegistrationDtoValidator;
     }
 
     @GetMapping
@@ -32,16 +35,10 @@ public class SignUpController {
                          BindingResult bindingResult,
                          @RequestParam("redirect_to") String redirectTo) {
 
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("userAuthorizationDto", new UserAuthorizationDto());
-            return "sign-up";
-        }
+        userRegistrationDtoValidator.validate(userRegistrationDto, bindingResult);
 
-        if (!userRegistrationDto.getPassword().equals(userRegistrationDto.getConfirmPassword())) {
-            String errorMessage = "Password and confirmation do not match";
-            bindingResult.rejectValue("password", "error.passwordMismatch", errorMessage);
-            bindingResult.rejectValue("confirmPassword", "error.passwordConfirmationMismatch", errorMessage);
-            model.addAttribute("userAuthorizationDto", new UserAuthorizationDto());
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("userRegistrationDto", userRegistrationDto);
             return "sign-up";
         }
 
