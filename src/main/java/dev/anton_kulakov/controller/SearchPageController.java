@@ -32,7 +32,7 @@ public class SearchPageController {
 
     @GetMapping
     public String doGet(Model model, HttpServletRequest request) {
-        String query = request.getParameter("query");
+        String query = (String) request.getAttribute("queryAttribute");
 
         UserRequestDto userRequestDto = (UserRequestDto) request.getAttribute("userRequestDto");
         int userId = userRequestDto.getId();

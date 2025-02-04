@@ -1,3 +1,4 @@
+
 package dev.anton_kulakov.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -5,14 +6,14 @@ import dev.anton_kulakov.dao.LocationDao;
 import dev.anton_kulakov.dto.LocationResponseDto;
 import dev.anton_kulakov.dto.WeatherResponseDto;
 import dev.anton_kulakov.model.Location;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import jakarta.annotation.PostConstruct;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -23,8 +24,8 @@ import java.util.List;
 public class OpenWeatherAPIService {
     @Value("${api.key}")
     private String API_KEY;
-    private final static String GET_LOCATION_BY_COORDINATES_URL = "https://api.openweathermap.org/data/2.5/weather?lat=%f&lon=%f&appid=%s&units=metric";
-    private final static String GET_LOCATIONS_BY_NAME_URL = "http://api.openweathermap.org/geo/1.0/direct?q=%s&limit=10&appid=%s";
+    private final static String GET_LOCATIONS_BY_NAME_URL = "http://api.openweathermap.org/geo/1.0/direct";
+    private final static String GET_LOCATION_BY_COORDINATES_URL = "https://api.openweathermap.org/data/2.5/weather";
     private final LocationDao locationDao;
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
@@ -59,7 +60,13 @@ public class OpenWeatherAPIService {
         BigDecimal longitude = location.getLongitude();
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(GET_LOCATION_BY_COORDINATES_URL.formatted(latitude, longitude, API_KEY)))
+                .uri(UriComponentsBuilder.fromUriString(GET_LOCATION_BY_COORDINATES_URL)
+                        .queryParam("lat", latitude)
+                        .queryParam("lon", longitude)
+                        .queryParam("appid", API_KEY)
+                        .queryParam("units", "metric")
+                        .build()
+                        .toUri())
                 .GET()
                 .build();
 
@@ -78,7 +85,12 @@ public class OpenWeatherAPIService {
 
     public List<LocationResponseDto> getLocationsByName(String locationName, int userID) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(GET_LOCATIONS_BY_NAME_URL.formatted(locationName, API_KEY)))
+                .uri(UriComponentsBuilder.fromUriString(GET_LOCATIONS_BY_NAME_URL)
+                        .queryParam("q", locationName)
+                        .queryParam("limit", 10)
+                        .queryParam("appid", API_KEY)
+                        .build()
+                        .toUri())
                 .GET()
                 .build();
 
