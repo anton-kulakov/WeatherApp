@@ -46,6 +46,7 @@
                                 <input type="hidden" name="_method" value="DELETE" />
                                 <input type="hidden" name="latitude" th:value="${locationResponseDto.latitude}">
                                 <input type="hidden" name="longitude" th:value="${locationResponseDto.longitude}">
+                                <input type="hidden" name="query" th:value="${query}">
                                 <button type="submit" class="btn-close" aria-label="Delete"></button>
                             </form>
                         </div>
@@ -60,6 +61,7 @@
                                     <input type="hidden" name="name" th:value="${locationResponseDto.name}">
                                     <input type="hidden" name="latitude" th:value="${locationResponseDto.latitude}">
                                     <input type="hidden" name="longitude" th:value="${locationResponseDto.longitude}">
+                                    <input type="hidden" name="query" th:value="${query}">
 
                                     <button th:if="${!locationResponseDto.isAddedToDatabase()}" type="submit" class="btn btn-primary w-100">
                                         Add

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -45,6 +46,7 @@ public class SearchPageController {
         }
 
         model.addAttribute("login", userRequestDto.getLogin());
+        model.addAttribute("query", query);
         model.addAttribute("locationResponseDtoList", locationResponseDtoList);
 
         return "search-results";
@@ -52,7 +54,11 @@ public class SearchPageController {
 
     @PostMapping
     public String doPost(HttpServletRequest request,
-                         @ModelAttribute("locationResponseDto") LocationResponseDto locationResponseDto) {
+                         @ModelAttribute("locationResponseDto") LocationResponseDto locationResponseDto,
+                         RedirectAttributes redirectAttributes) {
+
+        String query = (String) request.getAttribute("queryAttribute");
+
         UserRequestDto userRequestDto = (UserRequestDto) request.getAttribute("userRequestDto");
 
         Location location = locationMapper.toLocation(locationResponseDto);
@@ -60,13 +66,21 @@ public class SearchPageController {
 
         locationDao.persist(location);
 
-        return "search-results";
+        redirectAttributes.addAttribute("query", query);
+        return "redirect:/search";
     }
 
     @DeleteMapping
-    public String doDelete(@RequestParam("latitude") BigDecimal latitude,
-                           @RequestParam("longitude") BigDecimal longitude) {
+    public String doDelete(HttpServletRequest request,
+                           @RequestParam("latitude") BigDecimal latitude,
+                           @RequestParam("longitude") BigDecimal longitude,
+                           RedirectAttributes redirectAttributes) {
+
+        String query = (String) request.getAttribute("queryAttribute");
+
         locationDao.delete(latitude, longitude);
-        return "search-results";
+        redirectAttributes.addAttribute("query", query);
+
+        return "redirect:/search";
     }
 }
