@@ -52,6 +52,6 @@ public class HomePageController {
     public String doDelete(@RequestParam("latitude") BigDecimal latitude,
                            @RequestParam("longitude") BigDecimal longitude) {
         locationDao.delete(latitude, longitude);
-        return "index";
+        return "redirect:/index";
     }
 }
