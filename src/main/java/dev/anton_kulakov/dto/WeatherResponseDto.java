@@ -16,11 +16,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherResponseDto {
+    private String locationName;
     private BigDecimal latitude;
     private BigDecimal longitude;
-
-    @JsonProperty("name")
-    private String locationName;
 
     @JsonProperty("main")
     private WeatherInfo weatherInfo;

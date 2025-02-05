@@ -77,6 +77,7 @@ public class OpenWeatherAPIService {
         }
 
         WeatherResponseDto weatherResponseDto = objectMapper.readValue(response.body(), WeatherResponseDto.class);
+        weatherResponseDto.setLocationName(location.getName());
         weatherResponseDto.setLatitude(latitude);
         weatherResponseDto.setLongitude(longitude);
 
