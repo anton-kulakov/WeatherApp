@@ -20,9 +20,9 @@ public class SearchPageInterceptor implements HandlerInterceptor {
 
         String query = rawQuery.replaceAll("\\s{2,}", " ").trim();
 
-        String regex = "^[a-zA-Zа-яА-Я0-9'-]+( [a-zA-Zа-яА-Я0-9'-]+)*$";
+        String regex = "^[a-zA-Z\\u0410-\\u044F0-9'-]+( [a-zA-Z\\u0410-\\u044F0-9'-]+)*$";
 
-        Pattern pattern = Pattern.compile(regex);
+        Pattern pattern = Pattern.compile(regex, Pattern.UNICODE_CHARACTER_CLASS);
         boolean isQueryValid = pattern.matcher(query).matches();
 
         if (!isQueryValid) {
