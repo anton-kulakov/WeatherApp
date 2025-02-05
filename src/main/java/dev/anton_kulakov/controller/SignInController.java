@@ -3,6 +3,7 @@ package dev.anton_kulakov.controller;
 import dev.anton_kulakov.dto.UserAuthorizationDto;
 import dev.anton_kulakov.service.CookieService;
 import dev.anton_kulakov.service.SessionService;
+import dev.anton_kulakov.validator.RedirectUrlValidator;
 import dev.anton_kulakov.validator.UserAuthDtoValidator;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,12 +22,14 @@ public class SignInController {
     private final SessionService sessionService;
     private final CookieService cookieService;
     private final UserAuthDtoValidator userAuthDtoValidator;
+    private final RedirectUrlValidator redirectUrlValidator;
 
     @Autowired
-    public SignInController(SessionService sessionService, CookieService cookieService, UserAuthDtoValidator userAuthDtoValidator) {
+    public SignInController(SessionService sessionService, CookieService cookieService, UserAuthDtoValidator userAuthDtoValidator, RedirectUrlValidator redirectUrlValidator) {
         this.sessionService = sessionService;
         this.cookieService = cookieService;
         this.userAuthDtoValidator = userAuthDtoValidator;
+        this.redirectUrlValidator = redirectUrlValidator;
     }
 
     @GetMapping
@@ -47,6 +50,10 @@ public class SignInController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("userAuthorizationDto", userAuthorizationDto);
             return "sign-in";
+        }
+
+        if (!redirectUrlValidator.isRedirectUrlValid(redirectTo)) {
+            redirectTo = "/index";
         }
 
         UUID uuid = sessionService.create(userAuthorizationDto.getLogin());
