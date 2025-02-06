@@ -2,8 +2,8 @@ package dev.anton_kulakov.controller;
 
 import dev.anton_kulakov.dao.LocationDao;
 import dev.anton_kulakov.dto.LocationResponseDto;
-import dev.anton_kulakov.dto.UserRequestDto;
 import dev.anton_kulakov.model.Location;
+import dev.anton_kulakov.model.User;
 import dev.anton_kulakov.service.LocationMapper;
 import dev.anton_kulakov.service.OpenWeatherAPIService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,18 +34,16 @@ public class SearchPageController {
     @GetMapping
     public String doGet(Model model, HttpServletRequest request) {
         String query = (String) request.getAttribute("queryAttribute");
-
-        UserRequestDto userRequestDto = (UserRequestDto) request.getAttribute("userRequestDto");
-        int userId = userRequestDto.getId();
+        User user = (User) request.getAttribute("user");
         List<LocationResponseDto> locationResponseDtoList;
 
         try {
-            locationResponseDtoList = openWeatherAPIService.getLocationsByName(query, userId);
+            locationResponseDtoList = openWeatherAPIService.getLocationsByName(query, user);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        model.addAttribute("login", userRequestDto.getLogin());
+        model.addAttribute("login", user.getLogin());
         model.addAttribute("query", query);
         model.addAttribute("locationResponseDtoList", locationResponseDtoList);
 
@@ -58,12 +56,10 @@ public class SearchPageController {
                          RedirectAttributes redirectAttributes) {
 
         String query = (String) request.getAttribute("queryAttribute");
-
-        UserRequestDto userRequestDto = (UserRequestDto) request.getAttribute("userRequestDto");
-
+        User user = (User) request.getAttribute("user");
         Location location = locationMapper.toLocation(locationResponseDto);
-        location.setUserID(userRequestDto.getId());
 
+        location.setUser(user);
         locationDao.persist(location);
 
         redirectAttributes.addAttribute("query", query);
@@ -77,8 +73,9 @@ public class SearchPageController {
                            RedirectAttributes redirectAttributes) {
 
         String query = (String) request.getAttribute("queryAttribute");
+        User user = (User) request.getAttribute("user");
 
-        locationDao.delete(latitude, longitude);
+        locationDao.delete(user, latitude, longitude);
         redirectAttributes.addAttribute("query", query);
 
         return "redirect:/search";

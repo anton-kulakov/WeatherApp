@@ -1,7 +1,5 @@
 package dev.anton_kulakov.controller.interceptor;
 
-import dev.anton_kulakov.dao.UserDao;
-import dev.anton_kulakov.dto.UserRequestDto;
 import dev.anton_kulakov.model.User;
 import dev.anton_kulakov.model.UserSession;
 import dev.anton_kulakov.service.CookieService;
@@ -17,19 +15,18 @@ import java.util.Optional;
 public class IdentifiedUserInterceptor implements HandlerInterceptor {
     private final CookieService cookieService;
     private final SessionService sessionService;
-    private final UserDao userDao;
 
     @Autowired
-    public IdentifiedUserInterceptor(CookieService cookieService, SessionService sessionService, UserDao userDao) {
+    public IdentifiedUserInterceptor(CookieService cookieService, SessionService sessionService) {
         this.cookieService = cookieService;
         this.sessionService = sessionService;
-        this.userDao = userDao;
     }
 
     @Override
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
                              Object handler) throws Exception {
+
         Optional<Cookie> cookieOptional = cookieService.getByName(request.getCookies(), "uuid");
 
         if (cookieOptional.isEmpty()) {
@@ -44,16 +41,8 @@ public class IdentifiedUserInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        int userId = userSessionOptional.get().getUserID();
-        Optional<User> userOptional = userDao.getById(userId);
-
-        if (userOptional.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/sign-up");
-            return false;
-        }
-
-        User user = userOptional.get();
-        request.setAttribute("userRequestDto", new UserRequestDto(user.getId(), user.getLogin()));
+        User user = userSessionOptional.get().getUser();
+        request.setAttribute("user", user);
 
         return true;
     }

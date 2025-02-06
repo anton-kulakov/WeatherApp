@@ -47,7 +47,7 @@ public class SessionService {
         User user = optionalUser.get();
         UUID uuid = UUID.randomUUID();
         LocalDateTime expiresAt = LocalDateTime.now().plusHours(24);
-        UserSession userSession = new UserSession(uuid.toString(), user.getId(), expiresAt);
+        UserSession userSession = new UserSession(uuid.toString(), user, expiresAt);
 
         sessionDao.persist(userSession);
 

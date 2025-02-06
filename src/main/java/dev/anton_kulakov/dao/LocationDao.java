@@ -1,6 +1,7 @@
 package dev.anton_kulakov.dao;
 
 import dev.anton_kulakov.model.Location;
+import dev.anton_kulakov.model.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.MutationQuery;
@@ -15,9 +16,9 @@ import java.util.List;
 @Repository
 public class LocationDao {
     private final SessionFactory sessionFactory;
-    private static final String GET_BY_USER_ID_HQL = "FROM Location l WHERE l.userID = :value";
-    private static final String COUNT_BY_USER_ID_HQL = "SELECT COUNT(l) FROM Location l WHERE l.userID = :userId AND l.latitude = :latitude AND l.longitude = :longitude";
-    private static final String DELETE_HQL = "DELETE FROM Location l WHERE l.latitude = :latitude AND l.longitude = :longitude";
+    private static final String GET_HQL = "FROM Location l WHERE l.user = :user";
+    private static final String COUNT_HQL = "SELECT COUNT(l) FROM Location l WHERE l.user = :user AND l.latitude = :latitude AND l.longitude = :longitude";
+    private static final String DELETE_HQL = "DELETE FROM Location l WHERE l.user = :user AND l.latitude = :latitude AND l.longitude = :longitude";
 
     @Autowired
     public LocationDao(SessionFactory sessionFactory) {
@@ -31,9 +32,10 @@ public class LocationDao {
     }
 
     @Transactional
-    public void delete(BigDecimal latitude, BigDecimal longitude) {
+    public void delete(User user, BigDecimal latitude, BigDecimal longitude) {
         Session session = sessionFactory.getCurrentSession();
         MutationQuery query = session.createMutationQuery(DELETE_HQL);
+        query.setParameter("user", user);
         query.setParameter("latitude", latitude);
         query.setParameter("longitude", longitude);
 
@@ -41,19 +43,19 @@ public class LocationDao {
     }
 
     @Transactional(readOnly = true)
-    public List<Location> getByUserId(int userId) {
+    public List<Location> get(User user) {
         Session session = sessionFactory.getCurrentSession();
-        Query<Location> query = session.createQuery(GET_BY_USER_ID_HQL, Location.class);
-        query.setParameter("value", userId);
+        Query<Location> query = session.createQuery(GET_HQL, Location.class);
+        query.setParameter("user", user);
 
-        return query.list();
+        return query.getResultList();
     }
 
     @Transactional(readOnly = true)
-    public Long countByUserId(int userId, BigDecimal latitude, BigDecimal longitude) {
+    public Long count(User user, BigDecimal latitude, BigDecimal longitude) {
         Session session = sessionFactory.getCurrentSession();
-        Query<Long> query = session.createQuery(COUNT_BY_USER_ID_HQL, Long.class);
-        query.setParameter("userId", userId);
+        Query<Long> query = session.createQuery(COUNT_HQL, Long.class);
+        query.setParameter("user", user);
         query.setParameter("latitude", latitude);
         query.setParameter("longitude", longitude);
 

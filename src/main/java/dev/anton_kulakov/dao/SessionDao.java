@@ -14,9 +14,9 @@ import java.util.Optional;
 @Repository
 public class SessionDao {
     private final SessionFactory sessionFactory;
-    private static final String COUNT_BY_ID_HQL = "SELECT COUNT(us) FROM UserSession us WHERE us.id = :value";
+    private static final String COUNT_BY_ID_HQL = "SELECT COUNT(us) FROM UserSession us WHERE us.id = :id";
     private static final String DELETE_EXPIRED_SESSIONS_HQL = "DELETE FROM UserSession us WHERE us.expiresAt < NOW()";
-    private static final String GET_BY_ID_HQL = "FROM UserSession us WHERE us.id = :value";
+    private static final String GET_BY_ID_HQL = "FROM UserSession us WHERE us.id = :id";
 
     @Autowired
     public SessionDao(SessionFactory sessionFactory) {
@@ -47,7 +47,7 @@ public class SessionDao {
     public Long countById(String uuid) {
         Session session = sessionFactory.getCurrentSession();
         Query<Long> query = session.createQuery(COUNT_BY_ID_HQL, Long.class);
-        query.setParameter("value", uuid);
+        query.setParameter("id", uuid);
 
         return query.uniqueResult();
     }
@@ -56,7 +56,7 @@ public class SessionDao {
     public Optional<UserSession> getById(String uuid) {
         Session session = sessionFactory.getCurrentSession();
         Query<UserSession> query = session.createQuery(GET_BY_ID_HQL, UserSession.class);
-        query.setParameter("value", uuid);
+        query.setParameter("id", uuid);
 
         return query.uniqueResultOptional();
     }

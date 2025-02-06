@@ -1,9 +1,9 @@
 package dev.anton_kulakov.controller;
 
 import dev.anton_kulakov.dao.LocationDao;
-import dev.anton_kulakov.dto.UserRequestDto;
 import dev.anton_kulakov.dto.WeatherResponseDto;
 import dev.anton_kulakov.model.Location;
+import dev.anton_kulakov.model.User;
 import dev.anton_kulakov.service.OpenWeatherAPIService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,26 +32,29 @@ public class HomePageController {
 
     @GetMapping
     public String doGet(Model model, HttpServletRequest request) {
-        UserRequestDto userRequestDto = (UserRequestDto) request.getAttribute("userRequestDto");
-        List<Location> locations = locationDao.getByUserId(userRequestDto.getId());
+        User user = (User) request.getAttribute("user");
+        List<Location> userLocations = locationDao.get(user);
         List<WeatherResponseDto> weatherResponseDtoList;
 
         try {
-            weatherResponseDtoList = openWeatherAPIService.getLocationByCoordinates(locations);
+            weatherResponseDtoList = openWeatherAPIService.getLocationsByCoordinates(userLocations);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        model.addAttribute("login", userRequestDto.getLogin());
+        model.addAttribute("login", user.getLogin());
         model.addAttribute("weatherResponseDtoList", weatherResponseDtoList);
 
         return "index";
     }
 
     @DeleteMapping
-    public String doDelete(@RequestParam("latitude") BigDecimal latitude,
+    public String doDelete(HttpServletRequest request,
+                           @RequestParam("latitude") BigDecimal latitude,
                            @RequestParam("longitude") BigDecimal longitude) {
-        locationDao.delete(latitude, longitude);
+
+        User user = (User) request.getAttribute("user");
+        locationDao.delete(user, latitude, longitude);
         return "redirect:/index";
     }
 }

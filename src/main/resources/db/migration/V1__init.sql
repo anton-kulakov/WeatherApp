@@ -1,27 +1,27 @@
 CREATE TABLE IF NOT EXISTS Users
 (
-    ID       INT AUTO_INCREMENT PRIMARY KEY,
-    Login    VARCHAR(255) NOT NULL,
-    Password VARCHAR(255) NOT NULL
+    id       INT AUTO_INCREMENT PRIMARY KEY,
+    login    VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Locations
 (
-    ID        INT AUTO_INCREMENT PRIMARY KEY,
-    Name      VARCHAR(255) NOT NULL,
-    UserID    INT NOT NULL,
-    Latitude  DECIMAL(23, 20) NOT NULL,
-    Longitude DECIMAL(24, 20) NOT NULL,
-    FOREIGN KEY (UserID) REFERENCES Users(ID),
-    UNIQUE INDEX unique_latitude_longitude (UserID, Latitude, Longitude)
+    id        INT AUTO_INCREMENT PRIMARY KEY,
+    name      VARCHAR(255) NOT NULL,
+    user_id    INT NOT NULL,
+    latitude  DECIMAL(23, 20) NOT NULL,
+    longitude DECIMAL(24, 20) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES Users(id),
+    UNIQUE INDEX unique_latitude_longitude (user_id, latitude, longitude)
 );
 
 CREATE TABLE IF NOT EXISTS Sessions
 (
-    ID        VARCHAR(255) PRIMARY KEY,
-    UserID    INT NOT NULL,
-    ExpiresAt DATETIME NOT NULL,
-    FOREIGN KEY (UserID) REFERENCES Users(ID)
+    id        VARCHAR(255) PRIMARY KEY,
+    user_id    INT NOT NULL,
+    expires_at DATETIME NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES Users(id)
 );
 
 

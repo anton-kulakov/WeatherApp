@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.anton_kulakov.controller.interceptor.IdentifiedUserInterceptor;
 import dev.anton_kulakov.controller.interceptor.SearchPageInterceptor;
 import dev.anton_kulakov.controller.interceptor.UnidentifiedUserInterceptor;
-import dev.anton_kulakov.dao.UserDao;
 import dev.anton_kulakov.service.CookieService;
 import dev.anton_kulakov.service.SessionService;
 import org.flywaydb.core.Flyway;
@@ -80,8 +79,8 @@ public class SpringConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public IdentifiedUserInterceptor identifiedUserInterceptor(CookieService cookieService, SessionService sessionService, UserDao userDao) {
-        return new IdentifiedUserInterceptor(cookieService, sessionService, userDao);
+    public IdentifiedUserInterceptor identifiedUserInterceptor(CookieService cookieService, SessionService sessionService) {
+        return new IdentifiedUserInterceptor(cookieService, sessionService);
     }
 
     @Override

@@ -20,13 +20,16 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(nullable = false)
     private String name;
 
-    private int userID;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Column(unique = true)
+    @Column(nullable = false)
     private BigDecimal latitude;
 
-    @Column(unique = true)
+    @Column(nullable = false)
     private BigDecimal longitude;
 }

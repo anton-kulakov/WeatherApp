@@ -6,6 +6,7 @@ import dev.anton_kulakov.dao.LocationDao;
 import dev.anton_kulakov.dto.LocationResponseDto;
 import dev.anton_kulakov.dto.WeatherResponseDto;
 import dev.anton_kulakov.model.Location;
+import dev.anton_kulakov.model.User;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,7 +45,7 @@ public class OpenWeatherAPIService {
         }
     }
 
-    public List<WeatherResponseDto> getLocationByCoordinates(List<Location> locations) throws IOException, InterruptedException {
+    public List<WeatherResponseDto> getLocationsByCoordinates(List<Location> locations) throws IOException, InterruptedException {
         List<WeatherResponseDto> weatherResponseDtoList = new ArrayList<>();
 
         for (Location location : locations) {
@@ -84,7 +85,7 @@ public class OpenWeatherAPIService {
         return weatherResponseDto;
     }
 
-    public List<LocationResponseDto> getLocationsByName(String locationName, int userID) throws IOException, InterruptedException {
+    public List<LocationResponseDto> getLocationsByName(String locationName, User user) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(UriComponentsBuilder.fromUriString(GET_LOCATIONS_BY_NAME_URL)
                         .queryParam("q", locationName)
@@ -102,17 +103,17 @@ public class OpenWeatherAPIService {
         }
 
         List<LocationResponseDto> locationResponseDtoList = objectMapper.readValue(response.body(), objectMapper.getTypeFactory().constructCollectionType(List.class, LocationResponseDto.class));
-        checkIfLocationAddedByUser(locationResponseDtoList, userID);
+        checkIfLocationAddedByUser(locationResponseDtoList, user);
 
         return locationResponseDtoList;
     }
 
-    private void checkIfLocationAddedByUser(List<LocationResponseDto> locationResponseDtoList, int userID) {
+    private void checkIfLocationAddedByUser(List<LocationResponseDto> locationResponseDtoList, User user) {
         for (LocationResponseDto location : locationResponseDtoList) {
             BigDecimal latitude = location.getLatitude();
             BigDecimal longitude = location.getLongitude();
 
-            Long count = locationDao.countByUserId(userID, latitude, longitude);
+            Long count = locationDao.count(user, latitude, longitude);
 
             if (count == 1) {
                 location.setAddedToDatabase(true);
