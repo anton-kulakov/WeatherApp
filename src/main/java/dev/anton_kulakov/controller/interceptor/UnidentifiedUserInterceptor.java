@@ -26,7 +26,6 @@ public class UnidentifiedUserInterceptor implements HandlerInterceptor {
                              HttpServletResponse response,
                              Object handler) throws Exception {
 
-        sessionService.deleteExpiredSessions();
         Optional<Cookie> cookieOptional = cookieService.getByName(request.getCookies(), "uuid");
         Optional<UserSession> userSessionOptional = Optional.empty();
 

@@ -6,6 +6,7 @@ import dev.anton_kulakov.model.User;
 import dev.anton_kulakov.model.UserSession;
 import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ public class SessionService {
         this.sessionDao = sessionDao;
     }
 
+    @Scheduled(fixedRate = 21600000)
     public void deleteExpiredSessions() {
         sessionDao.deleteExpiredSessions();
     }
