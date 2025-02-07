@@ -5,7 +5,7 @@ import dev.anton_kulakov.dto.WeatherResponseDto;
 import dev.anton_kulakov.exception.WeatherApiException;
 import dev.anton_kulakov.model.Location;
 import dev.anton_kulakov.model.User;
-import dev.anton_kulakov.service.OpenWeatherAPIService;
+import dev.anton_kulakov.service.OpenWeatherApiService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,12 +23,12 @@ import java.util.List;
 @RequestMapping("/index")
 public class HomePageController {
     private final LocationDao locationDao;
-    private final OpenWeatherAPIService openWeatherAPIService;
+    private final OpenWeatherApiService openWeatherAPIService;
 
     @Autowired
-    public HomePageController(LocationDao locationDao, OpenWeatherAPIService openWeatherAPIService) {
+    public HomePageController(LocationDao locationDao, OpenWeatherApiService openWeatherApiService) {
         this.locationDao = locationDao;
-        this.openWeatherAPIService = openWeatherAPIService;
+        this.openWeatherAPIService = openWeatherApiService;
     }
 
     @GetMapping

@@ -6,7 +6,7 @@ import dev.anton_kulakov.exception.WeatherApiException;
 import dev.anton_kulakov.model.Location;
 import dev.anton_kulakov.model.User;
 import dev.anton_kulakov.service.LocationMapper;
-import dev.anton_kulakov.service.OpenWeatherAPIService;
+import dev.anton_kulakov.service.OpenWeatherApiService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,13 +23,13 @@ import java.util.List;
 public class SearchPageController {
     private final LocationDao locationDao;
     private final LocationMapper locationMapper;
-    private final OpenWeatherAPIService openWeatherAPIService;
+    private final OpenWeatherApiService openWeatherApiService;
 
     @Autowired
-    public SearchPageController(LocationDao locationDao, LocationMapper locationMapper, OpenWeatherAPIService openWeatherAPIService) {
+    public SearchPageController(LocationDao locationDao, LocationMapper locationMapper, OpenWeatherApiService openWeatherApiService) {
         this.locationDao = locationDao;
         this.locationMapper = locationMapper;
-        this.openWeatherAPIService = openWeatherAPIService;
+        this.openWeatherApiService = openWeatherApiService;
     }
 
     @GetMapping
@@ -39,7 +39,7 @@ public class SearchPageController {
         List<LocationResponseDto> locationResponseDtoList;
 
         try {
-            locationResponseDtoList = openWeatherAPIService.getLocationsByName(query, user);
+            locationResponseDtoList = openWeatherApiService.getLocationsByName(query, user);
         } catch (IOException | InterruptedException e) {
             throw new WeatherApiException("There is an error on the server");
         }

@@ -27,7 +27,7 @@ public class SignOutController {
     public String doPost(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         Optional<Cookie> foundCookieOptional = cookieService.getByName(cookies, "uuid");
-        foundCookieOptional.ifPresent(sessionService::deleteById);
+        foundCookieOptional.ifPresent(sessionService::delete);
 
         return "redirect:/sign-in";
     }

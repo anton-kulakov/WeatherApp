@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class OpenWeatherAPIService {
+public class OpenWeatherApiService {
     @Value("${api.key}")
     private String API_KEY;
     private final static String GET_LOCATIONS_BY_NAME_URL = "http://api.openweathermap.org/geo/1.0/direct";
@@ -33,7 +33,7 @@ public class OpenWeatherAPIService {
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public OpenWeatherAPIService(LocationDao locationDao, HttpClient httpClient, ObjectMapper objectMapper) {
+    public OpenWeatherApiService(LocationDao locationDao, HttpClient httpClient, ObjectMapper objectMapper) {
         this.locationDao = locationDao;
         this.httpClient = httpClient;
         this.objectMapper = objectMapper;

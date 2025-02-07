@@ -14,8 +14,8 @@ import java.util.Optional;
 @Repository
 public class UserDao {
     private final SessionFactory sessionFactory;
-    private static final String COUNT_BY_LOGIN_HQL = "SELECT COUNT(u) FROM User u WHERE u.login = :login";
-    private static final String GET_BY_LOGIN_HQL = "FROM User u WHERE u.login = :login";
+    private static final String COUNT_HQL = "SELECT COUNT(u) FROM User u WHERE u.login = :login";
+    private static final String GET_HQL = "FROM User u WHERE u.login = :login";
 
     @Autowired
     public UserDao(SessionFactory sessionFactory) {
@@ -25,7 +25,7 @@ public class UserDao {
     @Transactional
     public void persist(User user) {
         Session session = sessionFactory.getCurrentSession();
-        Query<Long> query = session.createQuery(COUNT_BY_LOGIN_HQL, Long.class);
+        Query<Long> query = session.createQuery(COUNT_HQL, Long.class);
         query.setParameter("login", user.getLogin());
         Long count = query.uniqueResult();
 
@@ -39,7 +39,7 @@ public class UserDao {
     @Transactional(readOnly = true)
     public Optional<User> getByLogin(String login) {
         Session session = sessionFactory.getCurrentSession();
-        Query<User> query = session.createQuery(GET_BY_LOGIN_HQL, User.class);
+        Query<User> query = session.createQuery(GET_HQL, User.class);
         query.setParameter("login", login);
 
         return query.uniqueResultOptional();

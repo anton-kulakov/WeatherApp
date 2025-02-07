@@ -12,13 +12,13 @@ import org.springframework.validation.Validator;
 import java.util.Optional;
 
 @Component
-public class UserAuthDtoValidator implements Validator {
+public class UserAuthorizationDtoValidator implements Validator {
 
     private final UserDao userDao;
     private final PasswordService passwordService;
 
     @Autowired
-    public UserAuthDtoValidator(UserDao userDao, PasswordService passwordService) {
+    public UserAuthorizationDtoValidator(UserDao userDao, PasswordService passwordService) {
         this.userDao = userDao;
         this.passwordService = passwordService;
     }

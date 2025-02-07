@@ -4,7 +4,7 @@ import dev.anton_kulakov.dto.UserAuthorizationDto;
 import dev.anton_kulakov.service.CookieService;
 import dev.anton_kulakov.service.SessionService;
 import dev.anton_kulakov.validator.RedirectUrlValidator;
-import dev.anton_kulakov.validator.UserAuthDtoValidator;
+import dev.anton_kulakov.validator.UserAuthorizationDtoValidator;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -21,14 +21,14 @@ import java.util.UUID;
 public class SignInController {
     private final SessionService sessionService;
     private final CookieService cookieService;
-    private final UserAuthDtoValidator userAuthDtoValidator;
+    private final UserAuthorizationDtoValidator userAuthorizationDtoValidator;
     private final RedirectUrlValidator redirectUrlValidator;
 
     @Autowired
-    public SignInController(SessionService sessionService, CookieService cookieService, UserAuthDtoValidator userAuthDtoValidator, RedirectUrlValidator redirectUrlValidator) {
+    public SignInController(SessionService sessionService, CookieService cookieService, UserAuthorizationDtoValidator userAuthorizationDtoValidator, RedirectUrlValidator redirectUrlValidator) {
         this.sessionService = sessionService;
         this.cookieService = cookieService;
-        this.userAuthDtoValidator = userAuthDtoValidator;
+        this.userAuthorizationDtoValidator = userAuthorizationDtoValidator;
         this.redirectUrlValidator = redirectUrlValidator;
     }
 
@@ -45,7 +45,7 @@ public class SignInController {
                          HttpServletResponse response,
                          @RequestParam("redirect_to") String redirectTo) {
 
-        userAuthDtoValidator.validate(userAuthorizationDto, bindingResult);
+        userAuthorizationDtoValidator.validate(userAuthorizationDto, bindingResult);
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("userAuthorizationDto", userAuthorizationDto);
