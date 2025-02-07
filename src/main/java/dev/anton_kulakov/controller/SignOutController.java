@@ -1,13 +1,11 @@
 package dev.anton_kulakov.controller;
 
-import dev.anton_kulakov.dto.UserAuthorizationDto;
 import dev.anton_kulakov.service.CookieService;
 import dev.anton_kulakov.service.SessionService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -26,13 +24,11 @@ public class SignOutController {
     }
 
     @PostMapping
-    public String doPost(Model model,
-                         HttpServletRequest request) {
+    public String doPost(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         Optional<Cookie> foundCookieOptional = cookieService.getByName(cookies, "uuid");
         foundCookieOptional.ifPresent(sessionService::deleteById);
 
-        model.addAttribute("userAuthorizationDto", new UserAuthorizationDto());
-        return "sign-in";
+        return "redirect:/sign-in";
     }
 }

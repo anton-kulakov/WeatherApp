@@ -1,5 +1,6 @@
 package dev.anton_kulakov.dao;
 
+import dev.anton_kulakov.exception.UserAlreadyExistsException;
 import dev.anton_kulakov.model.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -29,7 +30,7 @@ public class UserDao {
         Long count = query.uniqueResult();
 
         if (count != null && count > 0) {
-            throw new IllegalArgumentException("User with this login already exists");
+            throw new UserAlreadyExistsException("User with login %s already exists".formatted(user.getLogin()));
         } else {
             session.persist(user);
         }

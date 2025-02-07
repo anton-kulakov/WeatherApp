@@ -2,6 +2,7 @@ package dev.anton_kulakov.service;
 
 import dev.anton_kulakov.dao.SessionDao;
 import dev.anton_kulakov.dao.UserDao;
+import dev.anton_kulakov.exception.UserNotFoundException;
 import dev.anton_kulakov.model.User;
 import dev.anton_kulakov.model.UserSession;
 import jakarta.servlet.http.Cookie;
@@ -43,7 +44,7 @@ public class SessionService {
         Optional<User> optionalUser = userDao.getByLogin(login);
 
         if (optionalUser.isEmpty()) {
-            throw new RuntimeException();
+            throw new UserNotFoundException("User not found");
         }
 
         User user = optionalUser.get();

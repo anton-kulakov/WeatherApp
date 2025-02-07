@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.anton_kulakov.dao.LocationDao;
 import dev.anton_kulakov.dto.LocationResponseDto;
 import dev.anton_kulakov.dto.WeatherResponseDto;
+import dev.anton_kulakov.exception.WeatherApiException;
 import dev.anton_kulakov.model.Location;
 import dev.anton_kulakov.model.User;
 import jakarta.annotation.PostConstruct;
@@ -41,7 +42,7 @@ public class OpenWeatherAPIService {
     @PostConstruct
     public void checkApiKey() {
         if (API_KEY == null || API_KEY.isBlank()) {
-            throw new IllegalArgumentException("API key not configured!");
+            throw new WeatherApiException("API key is not configured!");
         }
     }
 
@@ -74,7 +75,7 @@ public class OpenWeatherAPIService {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() >= 400) {
-            throw new RuntimeException("There is an error on the server: " + response.statusCode());
+            throw new WeatherApiException("There is an error on the server: " + response.statusCode());
         }
 
         WeatherResponseDto weatherResponseDto = objectMapper.readValue(response.body(), WeatherResponseDto.class);
@@ -99,7 +100,7 @@ public class OpenWeatherAPIService {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() >= 400) {
-            throw new RuntimeException("There is an error on the server: " + response.statusCode());
+            throw new WeatherApiException("There is an error on the server: " + response.statusCode());
         }
 
         List<LocationResponseDto> locationResponseDtoList = objectMapper.readValue(response.body(), objectMapper.getTypeFactory().constructCollectionType(List.class, LocationResponseDto.class));

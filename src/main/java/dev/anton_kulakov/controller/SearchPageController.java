@@ -2,6 +2,7 @@ package dev.anton_kulakov.controller;
 
 import dev.anton_kulakov.dao.LocationDao;
 import dev.anton_kulakov.dto.LocationResponseDto;
+import dev.anton_kulakov.exception.WeatherApiException;
 import dev.anton_kulakov.model.Location;
 import dev.anton_kulakov.model.User;
 import dev.anton_kulakov.service.LocationMapper;
@@ -40,7 +41,7 @@ public class SearchPageController {
         try {
             locationResponseDtoList = openWeatherAPIService.getLocationsByName(query, user);
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new WeatherApiException("There is an error on the server");
         }
 
         model.addAttribute("login", user.getLogin());

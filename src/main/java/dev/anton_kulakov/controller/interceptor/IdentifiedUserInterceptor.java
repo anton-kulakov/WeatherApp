@@ -1,5 +1,6 @@
 package dev.anton_kulakov.controller.interceptor;
 
+import dev.anton_kulakov.exception.UserNotFoundException;
 import dev.anton_kulakov.model.User;
 import dev.anton_kulakov.model.UserSession;
 import dev.anton_kulakov.service.CookieService;
@@ -41,9 +42,15 @@ public class IdentifiedUserInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        User user = userSessionOptional.get().getUser();
-        request.setAttribute("user", user);
+        User user;
 
+        try {
+            user = userSessionOptional.get().getUser();
+        } catch (Exception e) {
+            throw new UserNotFoundException("User not found");
+        }
+
+        request.setAttribute("user", user);
         return true;
     }
 }
