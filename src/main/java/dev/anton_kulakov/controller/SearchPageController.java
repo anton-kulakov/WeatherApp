@@ -64,7 +64,7 @@ public class SearchPageController {
         Location location = locationMapper.toLocation(locationResponseDto);
 
         location.setUser(user);
-        locationDao.persist(location);
+        locationDao.persist(user, location);
 
         redirectAttributes.addAttribute("query", query);
         return "redirect:/search";

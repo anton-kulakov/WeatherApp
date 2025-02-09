@@ -1,7 +1,9 @@
 package dev.anton_kulakov.dao;
 
+import dev.anton_kulakov.exception.LocationAlreadyExistsException;
 import dev.anton_kulakov.model.Location;
 import dev.anton_kulakov.model.User;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.MutationQuery;
@@ -14,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
+@Slf4j
 public class LocationDao {
     private final SessionFactory sessionFactory;
     private static final String GET_HQL = "FROM Location l WHERE l.user = :user";
@@ -26,9 +29,16 @@ public class LocationDao {
     }
 
     @Transactional
-    public void persist(Location location) {
+    public void persist(User user, Location location) {
         Session session = sessionFactory.getCurrentSession();
-        session.persist(location);
+        Long count = count(user, location.getLatitude(), location.getLongitude());
+
+        if (count != null && count > 0) {
+            log.error("Location {} already exists", location.getName());
+            throw new LocationAlreadyExistsException("Location %s already exists".formatted(location.getName()));
+        } else {
+            session.persist(location);
+        }
     }
 
     @Transactional
