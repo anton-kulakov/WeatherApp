@@ -8,7 +8,9 @@ import org.springframework.web.servlet.ModelAndView;
 public class MainExceptionHandler {
     @ExceptionHandler({
             UserNotFoundException.class,
-            UserAlreadyExistsException.class
+            UserAlreadyExistsException.class,
+            WeatherApiException.class,
+            LocationAlreadyExistsException.class
     })
     public ModelAndView handleCustomAppExceptions(MainAppException e) {
         ModelAndView modelAndView = new ModelAndView("error");
