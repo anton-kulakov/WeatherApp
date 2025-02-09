@@ -8,11 +8,13 @@ import dev.anton_kulakov.service.SessionService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.Optional;
 
+@Slf4j
 public class IdentifiedUserInterceptor implements HandlerInterceptor {
     private final CookieService cookieService;
     private final SessionService sessionService;
@@ -47,6 +49,7 @@ public class IdentifiedUserInterceptor implements HandlerInterceptor {
         try {
             user = userSessionOptional.get().getUser();
         } catch (Exception e) {
+            log.error("User from UserSession {} not found", userSessionOptional.get().getId());
             throw new UserNotFoundException("User not found");
         }
 

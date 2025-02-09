@@ -6,6 +6,7 @@ import dev.anton_kulakov.exception.UserNotFoundException;
 import dev.anton_kulakov.model.User;
 import dev.anton_kulakov.model.UserSession;
 import jakarta.servlet.http.Cookie;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class SessionService {
     private final UserDao userDao;
     private final SessionDao sessionDao;
@@ -44,6 +46,7 @@ public class SessionService {
         Optional<User> optionalUser = userDao.getByLogin(login);
 
         if (optionalUser.isEmpty()) {
+            log.error("User with login {} not found", login);
             throw new UserNotFoundException("User not found");
         }
 

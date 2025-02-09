@@ -2,6 +2,7 @@ package dev.anton_kulakov.dao;
 
 import dev.anton_kulakov.exception.UserAlreadyExistsException;
 import dev.anton_kulakov.model.User;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Repository
+@Slf4j
 public class UserDao {
     private final SessionFactory sessionFactory;
     private static final String COUNT_HQL = "SELECT COUNT(u) FROM User u WHERE u.login = :login";
@@ -30,6 +32,7 @@ public class UserDao {
         Long count = query.uniqueResult();
 
         if (count != null && count > 0) {
+            log.error("User with id {} and login {} already exists", user.getId(), user.getLogin());
             throw new UserAlreadyExistsException("User with login %s already exists".formatted(user.getLogin()));
         } else {
             session.persist(user);

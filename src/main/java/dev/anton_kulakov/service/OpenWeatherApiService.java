@@ -9,6 +9,7 @@ import dev.anton_kulakov.exception.WeatherApiException;
 import dev.anton_kulakov.model.Location;
 import dev.anton_kulakov.model.User;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class OpenWeatherApiService {
     @Value("${api.key}")
     private String API_KEY;
@@ -42,6 +44,7 @@ public class OpenWeatherApiService {
     @PostConstruct
     public void checkApiKey() {
         if (API_KEY == null || API_KEY.isBlank()) {
+            log.error("API key is not configured!");
             throw new WeatherApiException("API key is not configured!");
         }
     }
@@ -75,6 +78,7 @@ public class OpenWeatherApiService {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() >= 400) {
+            log.error("There is an error on the server: {}", response.statusCode());
             throw new WeatherApiException("There is an error on the server: " + response.statusCode());
         }
 
@@ -100,6 +104,7 @@ public class OpenWeatherApiService {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() >= 400) {
+            log.error("There is an error on the server: {}", response.statusCode());
             throw new WeatherApiException("There is an error on the server: " + response.statusCode());
         }
 

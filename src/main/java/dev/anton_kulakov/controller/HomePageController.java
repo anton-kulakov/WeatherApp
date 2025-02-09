@@ -7,6 +7,7 @@ import dev.anton_kulakov.model.Location;
 import dev.anton_kulakov.model.User;
 import dev.anton_kulakov.service.OpenWeatherApiService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/index")
+@Slf4j
 public class HomePageController {
     private final LocationDao locationDao;
     private final OpenWeatherApiService openWeatherAPIService;
@@ -40,6 +42,7 @@ public class HomePageController {
         try {
             weatherResponseDtoList = openWeatherAPIService.getLocationsByCoordinates(userLocations);
         } catch (IOException | InterruptedException e) {
+            log.error("There is an error on the server");
             throw new WeatherApiException("There is an error on the server");
         }
 
