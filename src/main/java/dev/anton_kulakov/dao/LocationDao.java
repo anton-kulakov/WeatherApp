@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 public class LocationDao {
     private final SessionFactory sessionFactory;
-    private static final String GET_HQL = "FROM Location l WHERE l.user = :user";
+    private static final String GET_HQL = "FROM Location l WHERE l.user = :user ORDER BY l.id DESC";
     private static final String COUNT_HQL = "SELECT COUNT(l) FROM Location l WHERE l.user = :user AND l.latitude = :latitude AND l.longitude = :longitude";
     private static final String DELETE_HQL = "DELETE FROM Location l WHERE l.user = :user AND l.latitude = :latitude AND l.longitude = :longitude";
 
