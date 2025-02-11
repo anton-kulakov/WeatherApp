@@ -39,7 +39,12 @@
 
         <div>
             <h2>Locations:</h2>
-            <div class="row">
+
+            <div th:if="${#lists.isEmpty(locationResponseDtoList)}" class="alert alert-info mt-3">
+                Unfortunately, there are no suitable locations available for your request.
+            </div>
+
+            <div class="row" th:unless="${#lists.isEmpty(locationResponseDtoList)}">
                 <div class="col-12 col-lg-3 col-md-6 mb-4" th:each="locationResponseDto : ${locationResponseDtoList}">
                     <div class="card h-100 position-relative location-card">
                         <div th:if="${locationResponseDto.isAddedToDatabase()}" class="position-absolute location-card-delete-form">
@@ -48,7 +53,7 @@
                                 <input type="hidden" name="latitude" th:value="${locationResponseDto.latitude}">
                                 <input type="hidden" name="longitude" th:value="${locationResponseDto.longitude}">
                                 <input type="hidden" name="query" th:value="${query}">
-                                <button type="submit" class="btn-close" aria-label="Delete"></button>
+                                <button type="submit" class="btn-close" aria-label="Delete" onclick="this.disabled=true; this.form.submit();"></button>
                             </form>
                         </div>
                         <div class="card-body d-flex flex-column">
@@ -64,7 +69,7 @@
                                     <input type="hidden" name="longitude" th:value="${locationResponseDto.longitude}">
                                     <input type="hidden" name="query" th:value="${query}">
 
-                                    <button th:if="${!locationResponseDto.isAddedToDatabase()}" type="submit" class="btn btn-primary w-100">
+                                    <button th:if="${!locationResponseDto.isAddedToDatabase()}" type="submit" class="btn btn-primary w-100" onclick="this.disabled=true; this.form.submit();">
                                         Add
                                     </button>
                                 </form>

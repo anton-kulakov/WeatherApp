@@ -46,7 +46,7 @@
                                 <input type="hidden" name="_method" value="DELETE">
                                 <input type="hidden" name="latitude" th:value="${weatherResponseDto.latitude}">
                                 <input type="hidden" name="longitude" th:value="${weatherResponseDto.longitude}">
-                                <button class="btn-close" aria-label="Delete"></button>
+                                <button type="submit" class="btn-close" aria-label="Delete" onclick="this.disabled=true; this.form.submit();"></button>
                             </form>
                         </div>
                         <img class="card-img-top img-fluid"
