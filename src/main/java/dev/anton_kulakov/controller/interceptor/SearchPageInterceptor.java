@@ -25,7 +25,7 @@ public class SearchPageInterceptor implements HandlerInterceptor {
         boolean isQueryValid = pattern.matcher(query).matches();
 
         if (!isQueryValid) {
-            query = "/";
+            query = " ";
         }
 
         request.setAttribute("queryAttribute", query);

@@ -28,7 +28,7 @@
     <div class="container mt-4">
         <div class="d-flex my-4">
             <form th:action="@{/search(query=${query})}" method="GET" class="input-group location-search-input-group me-3">
-                <input class="form-control" type="text" name="query" placeholder="Enter location" value="" required>
+                <input class="form-control" type="text" name="query" placeholder="Enter location" th:value="${query}" required>
                 <button class="btn btn-outline-secondary btn-sm clear-input-button" type="button"
                         onclick="this.previousElementSibling.value=''">
                     &times;
