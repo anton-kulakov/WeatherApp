@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.Optional;
@@ -27,8 +28,8 @@ public class IdentifiedUserInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request,
-                             HttpServletResponse response,
-                             Object handler) throws Exception {
+                             @NonNull HttpServletResponse response,
+                             @NonNull Object handler) throws Exception {
 
         Optional<Cookie> cookieOptional = cookieService.getByName(request.getCookies(), "uuid");
 

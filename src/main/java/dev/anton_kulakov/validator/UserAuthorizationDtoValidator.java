@@ -5,6 +5,7 @@ import dev.anton_kulakov.dto.UserAuthorizationDto;
 import dev.anton_kulakov.model.User;
 import dev.anton_kulakov.service.PasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -24,12 +25,12 @@ public class UserAuthorizationDtoValidator implements Validator {
     }
 
     @Override
-    public boolean supports(Class<?> aClass) {
+    public boolean supports(@NonNull Class<?> aClass) {
         return UserAuthorizationDto.class.equals(aClass);
     }
 
     @Override
-    public void validate(Object target, Errors errors) {
+    public void validate(@NonNull Object target, @NonNull Errors errors) {
         UserAuthorizationDto userAuthorizationDto = (UserAuthorizationDto) target;
         String login = userAuthorizationDto.getLogin();
         String enteredPassword = userAuthorizationDto.getPassword();
