@@ -18,17 +18,23 @@ public class SearchPageInterceptor implements HandlerInterceptor {
             rawQuery = "/";
         }
 
-        String query = rawQuery.replaceAll("\\s{2,}", " ").trim();
+        String query = removeMultipleSpaces(rawQuery);
 
-        String regex = "^[a-zA-Z\\u0410-\\u044F0-9'-]+( [a-zA-Z\\u0410-\\u044F0-9'-]+)*$";
-        Pattern pattern = Pattern.compile(regex, Pattern.UNICODE_CHARACTER_CLASS);
-        boolean isQueryValid = pattern.matcher(query).matches();
-
-        if (!isQueryValid) {
+        if (!isQueryValid(query)) {
             query = " ";
         }
 
         request.setAttribute("queryAttribute", query);
         return true;
+    }
+
+    private String removeMultipleSpaces(String rawQuery) {
+        return rawQuery.replaceAll("\\s{2,}", " ").trim();
+    }
+
+    private boolean isQueryValid(String query) {
+        String regex = "^[a-zA-Z\\u0410-\\u044F0-9'-]+( [a-zA-Z\\u0410-\\u044F0-9'-]+)*$";
+        Pattern pattern = Pattern.compile(regex, Pattern.UNICODE_CHARACTER_CLASS);
+        return pattern.matcher(query).matches();
     }
 }
