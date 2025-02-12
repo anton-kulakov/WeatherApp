@@ -31,8 +31,10 @@ public class UserAuthorizationDtoValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         UserAuthorizationDto userAuthorizationDto = (UserAuthorizationDto) target;
+        String login = userAuthorizationDto.getLogin();
+        String enteredPassword = userAuthorizationDto.getPassword();
 
-        Optional<User> optionalUser = userDao.getByLogin(userAuthorizationDto.getLogin());
+        Optional<User> optionalUser = userDao.getByLogin(login);
 
         if (optionalUser.isEmpty()) {
             errors.rejectValue("login", "", "The user with this username does not exist. Please create an account first");
@@ -41,7 +43,7 @@ public class UserAuthorizationDtoValidator implements Validator {
 
         User user = optionalUser.get();
 
-        if (!passwordService.isPasswordValid(userAuthorizationDto.getPassword(), user.getPassword())) {
+        if (!passwordService.isPasswordValid(enteredPassword, user.getPassword())) {
             errors.rejectValue("password", "", "The password you entered is incorrect. Please try again");
         }
     }
