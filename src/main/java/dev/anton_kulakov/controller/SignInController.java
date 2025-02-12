@@ -52,14 +52,11 @@ public class SignInController {
             return "sign-in";
         }
 
-        if (!redirectUrlValidator.isRedirectUrlValid(redirectTo)) {
-            redirectTo = "/index";
-        }
-
         UUID uuid = sessionService.create(userAuthorizationDto.getLogin());
         Cookie cookie = cookieService.create(uuid);
         response.addCookie(cookie);
+        String redirectToUrl = redirectUrlValidator.getValidRedirectToUrl(redirectTo);
 
-        return "redirect:" + redirectTo;
+        return "redirect:" + redirectToUrl;
     }
 }

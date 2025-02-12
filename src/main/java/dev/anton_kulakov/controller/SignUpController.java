@@ -45,11 +45,8 @@ public class SignUpController {
         }
 
         userService.persist(userRegistrationDto);
+        String redirectToUrl = redirectUrlValidator.getValidRedirectToUrl(redirectTo);
 
-        if (!redirectUrlValidator.isRedirectUrlValid(redirectTo)) {
-            redirectTo = "/sign-in";
-        }
-
-        return "redirect:" + redirectTo;
+        return "redirect:" + redirectToUrl;
     }
 }
