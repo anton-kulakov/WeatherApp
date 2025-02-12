@@ -9,15 +9,9 @@ public class RedirectUrlValidator {
     private static final Set<String> ALLOWED_REDIRECTS = Set.of("/sign-in", "/sign-up", "/index",  "/search");
 
     public String getValidRedirectToUrl(String redirectToUrl) {
-        String result = "/index";
-
-        if (isRedirectUrlValid(redirectToUrl)) {
-            result = redirectToUrl;
-        }
-
-        return result;
+        return isRedirectUrlValid(redirectToUrl) ? redirectToUrl : "/index";
     }
     private boolean isRedirectUrlValid(String url) {
-        return ALLOWED_REDIRECTS.contains(url);
+        return url!= null && ALLOWED_REDIRECTS.contains(url);
     }
 }
