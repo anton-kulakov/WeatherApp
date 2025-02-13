@@ -3,6 +3,7 @@ package dev.anton_kulakov.service;
 import dev.anton_kulakov.config.TestConfig;
 import dev.anton_kulakov.dao.UserDao;
 import dev.anton_kulakov.dto.UserRegistrationDto;
+import dev.anton_kulakov.exception.UserAlreadyExistsException;
 import dev.anton_kulakov.model.User;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.Assertions;
@@ -52,10 +53,15 @@ public class UserServiceIT {
         User user = new User("test-login", "test-password");
         userDao.persist(user);
 
-        IllegalArgumentException thrownException = Assertions.assertThrows(IllegalArgumentException.class,
-                () -> userDao.persist(user));
+        UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
+        userRegistrationDto.setLogin("test-login");
+        userRegistrationDto.setPassword("test-password");
+        userRegistrationDto.setConfirmPassword("test-password");
 
-        Assertions.assertEquals("User with this login already exists", thrownException.getMessage());
+        UserAlreadyExistsException thrownException = Assertions.assertThrows(UserAlreadyExistsException.class,
+                () -> userService.persist(userRegistrationDto));
+
+        Assertions.assertEquals("User with login test-login already exists", thrownException.getMessage());
     }
 }
 

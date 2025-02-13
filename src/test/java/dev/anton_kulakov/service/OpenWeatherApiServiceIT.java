@@ -2,7 +2,9 @@ package dev.anton_kulakov.service;
 
 import dev.anton_kulakov.config.TestConfig;
 import dev.anton_kulakov.dto.WeatherResponseDto;
+import dev.anton_kulakov.exception.WeatherApiException;
 import dev.anton_kulakov.model.Location;
+import dev.anton_kulakov.model.User;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -29,9 +31,9 @@ import static org.mockito.ArgumentMatchers.any;
 @SpringJUnitConfig(classes = TestConfig.class)
 @WebAppConfiguration
 @ExtendWith(MockitoExtension.class)
-public class OpenWeatherAPIServiceIT {
+public class OpenWeatherApiServiceIT {
     @Autowired
-    private OpenWeatherAPIService openWeatherAPIService;
+    private OpenWeatherApiService openWeatherApiService;
 
     @MockitoBean
     private HttpClient httpClient;
@@ -48,15 +50,15 @@ public class OpenWeatherAPIServiceIT {
                 .thenReturn(httpResponseMock);
 
         ArrayList<Location> locations = getLocationList();
-        List<WeatherResponseDto> weatherResponseDtoList = openWeatherAPIService.getLocationByCoordinates(locations);
+        List<WeatherResponseDto> weatherResponseDtoList = openWeatherApiService.getLocationsByCoordinates(locations);
 
-        Assertions.assertEquals("Moscow", weatherResponseDtoList.get(0).getLocationName());
+        Assertions.assertEquals("Overcast clouds", weatherResponseDtoList.get(0).getWeather()[0].getDescription());
     }
 
     @SneakyThrows
     @Test
-    @DisplayName("Should throw an exception")
-    void shouldThrowAnException() {
+    @DisplayName("Should throw an exception when trying to get a list of locations based on coordinates")
+    void shouldThrowAnExceptionWhenGettingLocationsByCoordinates() {
         HttpResponse<String> httpResponseMock = Mockito.mock(HttpResponse.class);
         Mockito.when(httpResponseMock.statusCode()).thenReturn(404);
         Mockito.when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
@@ -64,7 +66,20 @@ public class OpenWeatherAPIServiceIT {
 
         ArrayList<Location> locations = getLocationList();
 
-        Assertions.assertThrows(RuntimeException.class, () -> openWeatherAPIService.getLocationByCoordinates(locations));
+        Assertions.assertThrows(WeatherApiException.class, () -> openWeatherApiService.getLocationsByCoordinates(locations));
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("Should throw an exception when trying to get a list of locations based on name")
+    void shouldThrowAnExceptionWhenGettingLocationsByName() {
+        HttpResponse<String> httpResponseMock = Mockito.mock(HttpResponse.class);
+        Mockito.when(httpResponseMock.statusCode()).thenReturn(404);
+        Mockito.when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+                .thenReturn(httpResponseMock);
+        User user = new User();
+
+        Assertions.assertThrows(WeatherApiException.class, () -> openWeatherApiService.getLocationsByName("Moscow", user));
     }
 
     private static ArrayList<Location> getLocationList() {

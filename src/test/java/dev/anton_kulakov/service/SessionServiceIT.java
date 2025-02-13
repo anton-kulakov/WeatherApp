@@ -5,9 +5,13 @@ import dev.anton_kulakov.dao.SessionDao;
 import dev.anton_kulakov.dto.UserRegistrationDto;
 import dev.anton_kulakov.model.User;
 import dev.anton_kulakov.model.UserSession;
+import jakarta.servlet.http.Cookie;
 import lombok.SneakyThrows;
 import org.flywaydb.core.Flyway;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -23,13 +27,15 @@ public class SessionServiceIT {
     private final UserService userService;
     private final SessionService sessionService;
     private final SessionDao sessionDao;
+    private final CookieService cookieService;
     private final Flyway flyway;
 
     @Autowired
-    public SessionServiceIT(UserService userService, SessionService sessionService, SessionDao sessionDao, Flyway flyway) {
+    public SessionServiceIT(UserService userService, SessionService sessionService, SessionDao sessionDao, CookieService cookieService, Flyway flyway) {
         this.userService = userService;
         this.sessionService = sessionService;
         this.sessionDao = sessionDao;
+        this.cookieService = cookieService;
         this.flyway = flyway;
     }
 
@@ -41,40 +47,53 @@ public class SessionServiceIT {
     @Test
     @DisplayName("After authentication, the new session should be saved in the database")
     void shouldSaveNewSessionInDatabaseAfterAuthentication() {
-        createTestUserInDB();
-        User user = getTestUser();
-        UUID uuid = UUID.randomUUID();
-        sessionService.persist(user, uuid);
+        saveTestUserInDb();
+        UUID uuid = sessionService.create("test-login");
+        Cookie cookie = cookieService.create(uuid);
 
-        Assertions.assertEquals(1, (long) sessionDao.countById(uuid.toString()));
+        Assertions.assertEquals(uuid.toString(), sessionService.get(cookie).get().getId());
     }
 
     @SneakyThrows
     @Test
     @DisplayName("Expired sessions should be removed from the database")
     void shouldDeleteExpiredSessions() {
-        createTestUserInDB();
-        User user = getTestUser();
+        saveTestUserInDb();
+        User user = createTestUser();
         UUID uuid = UUID.randomUUID();
+        Cookie cookie = cookieService.create(uuid);
 
         LocalDateTime expiresAt = LocalDateTime.now();
-        UserSession userSession = new UserSession(uuid.toString(), user.getId(), expiresAt);
-
+        UserSession userSession = new UserSession(uuid.toString(), user, expiresAt);
         sessionDao.persist(userSession);
 
         Thread.sleep(2000);
         sessionService.deleteExpiredSessions();
 
-        Assertions.assertEquals(0, (long) sessionDao.countById(uuid.toString()));
+        Assertions.assertTrue(sessionService.get(cookie).isEmpty());
     }
 
-    private static User getTestUser() {
+    @Test
+    @DisplayName("After applying the delete method, the session should be deleted")
+    void shouldDeleteSession() {
+        saveTestUserInDb();
+
+        UUID uuid = sessionService.create("test-login");
+        Cookie cookie = cookieService.create(uuid);
+
+        sessionService.delete(cookie);
+
+        Assertions.assertTrue(sessionService.get(cookie).isEmpty());
+    }
+
+    private static User createTestUser() {
         User user = new User();
         user.setId(1);
+        user.setLogin("test-login");
         return user;
     }
 
-    private void createTestUserInDB() {
+    private void saveTestUserInDb() {
         UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
         userRegistrationDto.setLogin("test-login");
         userRegistrationDto.setPassword("test-password");
