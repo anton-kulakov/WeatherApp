@@ -119,9 +119,9 @@ And create two schemas:
 
 15. Then in VM options type required environment variables
 
-![16  Then in VM options type required environment variables](https://github.com/user-attachments/assets/d4495701-41ca-424c-9cfd-1a6e566a8b02)
+![16  Then in VM options type required environment variables](https://github.com/user-attachments/assets/8ededc01-9a9e-4190-9bea-ab8e539785ef)
 
-Enter your values instead of [YOUR_API_KEY], [YOUR_DATABASE_USERNAME] and [YOUR_DATABASE_PASSWORD].
+Enter your values instead of [YOUR_API_KEY], [YOUR_DB_URL], [YOUR_DATABASE_USERNAME] and [YOUR_DATABASE_PASSWORD].
 
 To make requests to the API, you need a key. To obtain it, you need to:
 
