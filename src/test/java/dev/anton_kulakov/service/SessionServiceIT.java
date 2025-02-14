@@ -44,6 +44,7 @@ public class SessionServiceIT {
         flyway.clean();
         flyway.migrate();
     }
+
     @Test
     @DisplayName("After authentication, the new session should be saved in the database")
     void shouldSaveNewSessionInDatabaseAfterAuthentication() {

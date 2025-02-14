@@ -22,6 +22,7 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class TestConfig {
     private final Environment env;
+
     @Autowired
     public TestConfig(Environment env) {
         this.env = env;
