@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
-@RequestMapping("/index")
+@RequestMapping(value = {"/","/index"})
 @Slf4j
 public class HomePageController {
     private final LocationDao locationDao;
